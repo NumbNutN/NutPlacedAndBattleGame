@@ -1,0 +1,8 @@
+{
+  "engine": "cocos-creator-js",
+  "packages": "packages",
+  "name": "NutGame",
+  "id": "27c4fbdc-cf3f-4d98-9e24-821336010e26",
+  "version": "2.4.9",
+  "isNew": false
+}
