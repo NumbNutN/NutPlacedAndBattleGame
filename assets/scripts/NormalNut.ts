@@ -8,7 +8,7 @@
 const {ccclass, property} = cc._decorator;
 import {PlacedItem,Nut,ValueObsever} from "./Interface"
 import State from "./State"
-import { Mode } from "./State";
+import { Mode,Action } from "./State";
 
 @ccclass
 export default class NormalNut extends cc.Component implements PlacedItem,Nut{
@@ -47,11 +47,11 @@ export default class NormalNut extends cc.Component implements PlacedItem,Nut{
     private _actionRandom: number = 10;
     private _atk: number = 10;
 
-    private _tarX: number;
-    private _tarY: number;
+    tarX: number;
+    tarY: number;
 
-    private _lastX: number;
-    private _lastY: number;
+    lastX: number;
+    lastY: number;
 
     private _moving: boolean;
 
@@ -89,17 +89,19 @@ export default class NormalNut extends cc.Component implements PlacedItem,Nut{
         }
     }
 
-    set tarX(value){
-        this._tarX = value;
-        this._lastX = this.node.x;
-        this._moving = true;
-    }
+    // set tarX(value){
+    //     this.tarX = value;
+    //     this.lastX = this.node.x;
+    //     this._moving = true;
+    // }
 
-    set tarY(value){
-        this._tarY = value;
-        this._lastY = this.node.y;
-        this._moving = true;
-    }
+    // set tarY(value){
+    //     this.tarY = value;
+    //     this.lastY = this.node.y;
+    //     this._moving = true;
+    // }
+
+
 
     static Instance(){
         if(!NormalNut._instance){
@@ -152,23 +154,32 @@ export default class NormalNut extends cc.Component implements PlacedItem,Nut{
 
         this.node.on(cc.Node.EventType.MOUSE_DOWN,(event)=>{
             //是否进入操作模式
-            if(State.mode = Mode.OPERATEMODE){
+            if(State.mode == Mode.OPERATEMODE){
+                //把当前Nut节点寄存到State
+                State.actionNut = this;
+                //储存当前的(x,y)坐标
+                this.lastX = this.node.x;
+                this.lastY = this.node.y;
                 this.moveRadius = cc.instantiate(this.moveRadiusPref);
                 this.moveRadius.setParent(this.node);
                 this.moveRadius.setPosition(0,0);
+                //this._moving = true;
+                
             }
         })
     }
     update (dt) {
-        if(this._moving){
-            if(Math.abs(this.node.x-this._tarX)>3){
-                this.node.x-=(this._lastX-this._tarX)*dt/3
+        console.debug(State.action);
+        if(State.action == Action.MOVING){
+            if(Math.abs(this.node.x-State.tarX)>3){
+                this.node.x-=(this.lastX-State.tarX)*dt/3;
             }
-            if(Math.abs(this.node.y-this._tarY)>3){
-                this.node.y-=(this._lastY-this._tarY)*dt/3
+            if(Math.abs(this.node.y-State.tarY)>3){
+                this.node.y-=(this.lastY-State.tarY)*dt/3;
             }
-            if(Math.abs(this.node.x-this._tarX)<=3&&Math.abs(this.node.y-this._tarY)<=3){
-                this._moving = false;
+            if(Math.abs(this.node.x-State.tarX)<=3&&Math.abs(this.node.y-State.tarY)<=3){
+                // this._moving = false;
+                State.action = Action.DO_NOTHING;
             }
         }
 

@@ -4,7 +4,7 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/reference/attributes.html
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
-
+import { Nut,ModeObsever,ActionObsevers } from "./Interface";
 const {ccclass, property} = cc._decorator;
 
 export enum SelectedComp{
@@ -18,17 +18,17 @@ export enum Mode{
     
 }
 
-export enum Operation{
-    move,
-    place,
-    attack,
-    pause
+export enum Action{
+    MOVING,
+    ATTACKING,
+    BUILDING,
+    DO_NOTHING
 }
 
 //我的第一个共享类
 
 @ccclass
-export default class State extends cc.Component {
+export default class State extends cc.Component{
 
     @property(cc.Label)
     label: cc.Label = null;
@@ -44,10 +44,36 @@ export default class State extends cc.Component {
     static canAttack: boolean;
     static canMove: boolean;
 
+    private static _mode :Mode = Mode.OPERATEMODE;
+
+    static actionNut: Nut = null;
     static tarX: number;
     static tarY: number;
+    static lastX: number;
+    static lastY: number;
 
-    private static _mode :Mode = Mode.OPERATEMODE;
+    static actionObsevers: Array<ActionObsevers> = new Array<ActionObsevers>();
+    private static _action: Action = Action.DO_NOTHING;
+
+    static set action(value: Action){
+        for(let observer of State.actionObsevers){
+            observer.ActionChanged(value);
+        }
+        
+        console.debug("action change to "+value);
+        State._action = value;
+        switch(value){
+            case Action.MOVING:
+                State.mode = Mode.WAITMODE;
+                break;
+        }
+    }
+
+    static get action(){
+        return State._action;
+    }
+
+    static modeObsevers: Array<ModeObsever> = new Array<ModeObsever>();
 
     static get mode(){
         return State._mode;
@@ -55,6 +81,9 @@ export default class State extends cc.Component {
 
     static set mode(value: Mode){
         State._mode = value;
+        for(let observer of State.modeObsevers){
+            observer.ModeChanged(value);
+        }
         switch(State._mode){
             case Mode.WAITMODE:
                 State.canPlace = false;
@@ -80,10 +109,9 @@ export default class State extends cc.Component {
 
     // onLoad () {}
 
-    
 
     start () {
-
+        
     }
 
     // update (dt) {}
