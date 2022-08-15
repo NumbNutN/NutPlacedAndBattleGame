@@ -6,11 +6,10 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const {ccclass, property} = cc._decorator;
-import ComponentBase from "./ComponentBase";
-import { ModeObsever } from "./Interface";
-import Message, { MessageCmd } from "./Message";
-import State, { Mode ,Action} from "./State";
-import UIManager from "./UIManager";
+import ComponentBase from "../ComponentBase";
+import Message, { MessageCmd } from "../Message";
+import State, { Mode ,Process} from "../State";
+import UIManager from "../UIManager";
 
 @ccclass
 export default class Info_Mode extends ComponentBase{

@@ -6,10 +6,10 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const {ccclass, property} = cc._decorator;
-import { Action } from "./State";
-import ComponentBase from "./ComponentBase";
-import Message, { MessageCmd } from "./Message";
-import UIManager from "./UIManager";
+import { Process } from "../State";
+import ComponentBase from "../ComponentBase";
+import Message, { MessageCmd } from "../Message";
+import UIManager from "../UIManager";
 
 @ccclass
 export default class info_action extends ComponentBase{
@@ -47,10 +47,10 @@ export default class info_action extends ComponentBase{
         if(msg.Command == MessageCmd.CMD_ACTIONCHANGED){
             console.debug("检测到行动改变");
             switch(msg.Content){
-                case Action.MOVING:
+                case Process.MOVING:
                     this.node.getComponent(cc.Label).string = "移动中";
                     break;
-                case Action.DO_NOTHING:
+                case Process.DO_NOTHING:
                     this.node.getComponent(cc.Label).string = "什么都不做";
                     break;
             }

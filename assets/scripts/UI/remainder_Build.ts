@@ -6,7 +6,6 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const {ccclass, property} = cc._decorator;
-import State ,{Mode,Process} from "./State";
 
 @ccclass
 export default class NewClass extends cc.Component {
@@ -25,11 +24,5 @@ export default class NewClass extends cc.Component {
 
     }
 
-    goToNextRound(){
-        State.mode = Mode.OPERATEMODE;
-    }
-
     // update (dt) {}
-
-
 }

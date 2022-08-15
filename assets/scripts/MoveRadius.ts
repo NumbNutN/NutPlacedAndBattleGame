@@ -10,7 +10,7 @@ import { MessageCmd, MessageType } from "./Message";
 import MessageCenter from "./MessageCenter";
 import NormalNut from "./NormalNut";
 import State from "./State";
-import { Action } from "./State";
+import { Process } from "./State";
 const {ccclass, property} = cc._decorator;
 
 @ccclass
@@ -53,7 +53,7 @@ export default class NewClass extends ComponentBase {
             // NormalNut.Instance().tarY = event.getY;
             this.node.destroy();
             
-            State.action = Action.MOVING;
+            State.action = Process.MOVING;
 
             
         })

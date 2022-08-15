@@ -10,8 +10,8 @@ import ComponentBase from "./ComponentBase";
 import {PlacedItem,Nut,ValueObsever} from "./Interface"
 import { MessageCmd, MessageType } from "./Message";
 import MessageCenter from "./MessageCenter";
-import State from "./State"
-import { Mode,Action } from "./State";
+import State, { Action } from "./State"
+import { Mode,Process } from "./State";
 
 @ccclass
 export default class NormalNut extends ComponentBase implements PlacedItem,Nut{
@@ -176,7 +176,7 @@ export default class NormalNut extends ComponentBase implements PlacedItem,Nut{
         })
     }
     update (dt) {
-        if(State.action == Action.MOVING && State.actionNut == this){
+        if(State.action == Process.MOVING && State.actionNut == this){
             if(Math.abs(this.node.x-State.tarX)>3){
                 this.node.x-=(this.lastX-State.tarX)*dt/3;
             }
@@ -185,7 +185,8 @@ export default class NormalNut extends ComponentBase implements PlacedItem,Nut{
             }
             if(Math.abs(this.node.x-State.tarX)<=3&&Math.abs(this.node.y-State.tarY)<=3){
                 // this._moving = false;
-                State.action = Action.DO_NOTHING;
+                State.action = Process.DO_NOTHING;
+                MessageCenter.SendMessage(MessageType.TYPE_ANY,MessageCmd.CMD_MOVECHANCE_CHANGED,-1);
             }
         }
 
