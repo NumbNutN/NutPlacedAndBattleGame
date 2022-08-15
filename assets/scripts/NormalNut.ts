@@ -6,12 +6,15 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const {ccclass, property} = cc._decorator;
+import ComponentBase from "./ComponentBase";
 import {PlacedItem,Nut,ValueObsever} from "./Interface"
+import { MessageCmd, MessageType } from "./Message";
+import MessageCenter from "./MessageCenter";
 import State from "./State"
 import { Mode,Action } from "./State";
 
 @ccclass
-export default class NormalNut extends cc.Component implements PlacedItem,Nut{
+export default class NormalNut extends ComponentBase implements PlacedItem,Nut{
 
     @property(cc.Label)
     label: cc.Label = null;
@@ -114,7 +117,9 @@ export default class NormalNut extends cc.Component implements PlacedItem,Nut{
 
     // LIFE-CYCLE CALLBACKS:
 
-    // onLoad () {}
+    onLoad () {
+        super.onLoad();
+    }
 
     start () {
         //生成血条和盾
@@ -155,21 +160,23 @@ export default class NormalNut extends cc.Component implements PlacedItem,Nut{
         this.node.on(cc.Node.EventType.MOUSE_DOWN,(event)=>{
             //是否进入操作模式
             if(State.mode == Mode.OPERATEMODE){
-                //把当前Nut节点寄存到State
-                State.actionNut = this;
+                
                 //储存当前的(x,y)坐标
                 this.lastX = this.node.x;
                 this.lastY = this.node.y;
                 this.moveRadius = cc.instantiate(this.moveRadiusPref);
                 this.moveRadius.setParent(this.node);
                 this.moveRadius.setPosition(0,0);
-                //this._moving = true;
+                //this._moving = true;  局部状态，错误的
+                //把当前Nut节点寄存到State
+                //State.actionNut = this;  被信息中心取代
+                MessageCenter.SendMessage(MessageType.TYPE_ANY,MessageCmd.CMD_NUT_TO_MOVE,this);
                 
             }
         })
     }
     update (dt) {
-        if(State.action == Action.MOVING){
+        if(State.action == Action.MOVING && State.actionNut == this){
             if(Math.abs(this.node.x-State.tarX)>3){
                 this.node.x-=(this.lastX-State.tarX)*dt/3;
             }

@@ -22,14 +22,26 @@ export default class Message{
 }
 
 export enum MessageType{
-    TYPE_ANY,
-    TYPE_UI
+    TYPE_ANY,  //向所有的管理层寄送
+    TYPE_UI,
+    TYPE_STATE
     
 }
 
 export enum MessageCmd{
-    CMD_MODECHANGED,
-    CMD_ACTIONCHANGED,
-    CMD_MOVECHANCE_CHANGED,
-    CMD_ACTIONCHANCE_CHANGED
+    CMD_MODECHANGED,   //行动模式改变
+    CMD_ACTIONCHANGED,  //当前行动改变
+    CMD_MOVECHANCE_CHANGED,  //当前移动机会改变
+    CMD_ACTIONCHANCE_CHANGED,  //当前行动机会改变
+    CMD_NUT_TO_MOVE,   //人员打开了移动模式
+    CMD_SET_NUT_TARGET_LOCATION
 }
+
+//消息体
+/*
+{
+    Type: TYPE_UI
+    Command:CMD_MODECHANGED
+    content::enum Mode
+}
+*/

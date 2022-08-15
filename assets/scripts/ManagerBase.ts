@@ -41,11 +41,11 @@ export default class ManagerBase extends ComponentBase {
 
     //接收消息并向下分发
     ReceiveMessage(msg: Message): void {
-        console.debug("管理者接收到消息");
+        console.debug("管理者接收到消息:");
+        console.debug(msg);
         super.ReceiveMessage(msg);
         //判断消息类型
         if(this.messageType != msg.Type && msg.Type){
-            console.debug(this.messageType+"丢弃消息");
             return;
         }
         //开始分发

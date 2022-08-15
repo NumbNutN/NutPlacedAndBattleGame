@@ -6,12 +6,13 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const {ccclass, property} = cc._decorator;
-import { ActionObsevers } from "./Interface";
 import { Action } from "./State";
-import State from "./State";
+import ComponentBase from "./ComponentBase";
+import Message, { MessageCmd } from "./Message";
+import UIManager from "./UIManager";
 
 @ccclass
-export default class info_action extends cc.Component implements ActionObsevers{
+export default class info_action extends ComponentBase{
 
     @property(cc.Label)
     label: cc.Label = null;
@@ -21,20 +22,38 @@ export default class info_action extends cc.Component implements ActionObsevers{
 
     // LIFE-CYCLE CALLBACKS:
 
-    // onLoad () {}
-
-    start () {
-        State.actionObsevers.push(this);
+    onLoad () {
+        //super.onLoad(); //??这句话什么BUg
+        UIManager.Instance.RegisterReceiver(this);
+        
     }
 
-    ActionChanged(action: Action){
-        switch(action){
-            case Action.MOVING:
-                this.node.getComponent(cc.Label).string = "移动中";
-                break;
-            case Action.DO_NOTHING:
-                this.node.getComponent(cc.Label).string = "什么都不做";
-                break;
+    // start () {
+    //     State.actionObsevers.push(this);
+    // }
+
+    // ActionChanged(action: Action){
+    //     switch(action){
+    //         case Action.MOVING:
+    //             this.node.getComponent(cc.Label).string = "移动中";
+    //             break;
+    //         case Action.DO_NOTHING:
+    //             this.node.getComponent(cc.Label).string = "什么都不做";
+    //             break;
+    //     }
+    // }
+
+    ReceiveMessage(msg: Message): void {
+        if(msg.Command == MessageCmd.CMD_ACTIONCHANGED){
+            console.debug("检测到行动改变");
+            switch(msg.Content){
+                case Action.MOVING:
+                    this.node.getComponent(cc.Label).string = "移动中";
+                    break;
+                case Action.DO_NOTHING:
+                    this.node.getComponent(cc.Label).string = "什么都不做";
+                    break;
+            }
         }
     }
 

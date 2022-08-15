@@ -13,7 +13,7 @@ import State, { Mode ,Action} from "./State";
 import UIManager from "./UIManager";
 
 @ccclass
-export default class Info extends ComponentBase implements ModeObsever{
+export default class Info_Mode extends ComponentBase{
 
     @property(cc.Label)
     label: cc.Label = null;
@@ -28,19 +28,19 @@ export default class Info extends ComponentBase implements ModeObsever{
     }
 
     start () {
-        State.modeObsevers.push(this);
+        // State.modeObsevers.push(this);
     }
 
-    ModeChanged(mode: Mode) {
-        switch(mode){
-            case Mode.WAITMODE:
-                this.node.getComponent(cc.Label).string = "等待模式";
-                break;
-            case Mode.OPERATEMODE:
-                this.node.getComponent(cc.Label).string = "操作模式";
-                break;
-        }
-    }
+    // ModeChanged(mode: Mode) {
+    //     switch(mode){
+    //         case Mode.WAITMODE:
+    //             this.node.getComponent(cc.Label).string = "等待模式";
+    //             break;
+    //         case Mode.OPERATEMODE:
+    //             this.node.getComponent(cc.Label).string = "操作模式";
+    //             break;
+    //     }
+    // }
 
     ReceiveMessage(msg: Message): void {
         if (msg.Command == MessageCmd.CMD_MODECHANGED){
@@ -50,6 +50,9 @@ export default class Info extends ComponentBase implements ModeObsever{
                     break;
                 case Mode.OPERATEMODE:
                     this.node.getComponent(cc.Label).string = "操作模式";
+                    break;
+                case Mode.MOVEMODE:
+                    this.node.getComponent(cc.Label).string = "移动模式";
                     break;
             }
         }
