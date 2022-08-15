@@ -169,7 +169,6 @@ export default class NormalNut extends cc.Component implements PlacedItem,Nut{
         })
     }
     update (dt) {
-        console.debug(State.action);
         if(State.action == Action.MOVING){
             if(Math.abs(this.node.x-State.tarX)>3){
                 this.node.x-=(this.lastX-State.tarX)*dt/3;

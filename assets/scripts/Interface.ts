@@ -1,4 +1,4 @@
-import { Mode } from "./State";
+import { Mode,Action } from "./State";
 
 export interface SelectableCompo{
     OnMouseMove();
@@ -21,4 +21,8 @@ export interface ValueObsever{
 
 export interface ModeObsever{
     ModeChanged(mode:Mode);
+}
+
+export interface ActionObsever{
+    ActionChanged(action:Action);
 }

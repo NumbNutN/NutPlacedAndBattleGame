@@ -6,11 +6,14 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const {ccclass, property} = cc._decorator;
-import { ActionObsevers, ModeObsever } from "./Interface";
+import ComponentBase from "./ComponentBase";
+import { ModeObsever } from "./Interface";
+import Message, { MessageCmd } from "./Message";
 import State, { Mode ,Action} from "./State";
+import UIManager from "./UIManager";
 
 @ccclass
-export default class Info extends cc.Component implements ModeObsever{
+export default class Info extends ComponentBase implements ModeObsever{
 
     @property(cc.Label)
     label: cc.Label = null;
@@ -20,7 +23,9 @@ export default class Info extends cc.Component implements ModeObsever{
 
     // LIFE-CYCLE CALLBACKS:
 
-    // onLoad () {}
+    onLoad () {
+        UIManager.Instance.RegisterReceiver(this);
+    }
 
     start () {
         State.modeObsevers.push(this);
@@ -34,6 +39,19 @@ export default class Info extends cc.Component implements ModeObsever{
             case Mode.OPERATEMODE:
                 this.node.getComponent(cc.Label).string = "操作模式";
                 break;
+        }
+    }
+
+    ReceiveMessage(msg: Message): void {
+        if (msg.Command == MessageCmd.CMD_MODECHANGED){
+            switch(msg.Content){
+                case Mode.WAITMODE:
+                    this.node.getComponent(cc.Label).string = "等待模式";
+                    break;
+                case Mode.OPERATEMODE:
+                    this.node.getComponent(cc.Label).string = "操作模式";
+                    break;
+            }
         }
     }
 

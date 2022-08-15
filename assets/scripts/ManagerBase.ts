@@ -6,7 +6,7 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
 import ComponentBase from "./ComponentBase";
-import {MessageType} from "./Message"
+import Message, {MessageType} from "./Message"
 import MessageCenter from "./MessageCenter";
 
 const {ccclass, property} = cc._decorator;
@@ -24,6 +24,9 @@ export default class ManagerBase extends ComponentBase {
         this.messageType = this.SetMessageType();
         //把自己注册到消息中心
         MessageCenter.RegisterReceiver(this);
+        console.debug("管理者已注册：");
+        console.debug(this);
+        
     }
 
     //方法：设置当前管理类的消息类型，由实例化重写
@@ -34,6 +37,24 @@ export default class ManagerBase extends ComponentBase {
     //注册消息监听
     RegisterReceiver(cb: ComponentBase){
         this.ReceiveList.push(cb);
+    }
+
+    //接收消息并向下分发
+    ReceiveMessage(msg: Message): void {
+        console.debug("管理者接收到消息");
+        super.ReceiveMessage(msg);
+        //判断消息类型
+        if(this.messageType != msg.Type && msg.Type){
+            console.debug(this.messageType+"丢弃消息");
+            return;
+        }
+        //开始分发
+        for(let cb of this.ReceiveList){
+            console.debug("已分发给：")
+            console.debug(cb);
+            cb.ReceiveMessage(msg);
+        }
+
     }
 
 }

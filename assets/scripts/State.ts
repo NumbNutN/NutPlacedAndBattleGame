@@ -4,7 +4,9 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/reference/attributes.html
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
-import { Nut,ModeObsever,ActionObsevers } from "./Interface";
+import { Nut,ModeObsever,ActionObsever} from "./Interface";
+import { MessageCmd, MessageType } from "./Message";
+import MessageCenter from "./MessageCenter";
 const {ccclass, property} = cc._decorator;
 
 export enum SelectedComp{
@@ -52,13 +54,14 @@ export default class State extends cc.Component{
     static lastX: number;
     static lastY: number;
 
-    static actionObsevers: Array<ActionObsevers> = new Array<ActionObsevers>();
+    static actionObsevers: Array<ActionObsever> = new Array<ActionObsever>();
     private static _action: Action = Action.DO_NOTHING;
 
     static set action(value: Action){
         for(let observer of State.actionObsevers){
             observer.ActionChanged(value);
         }
+
         
         console.debug("action change to "+value);
         State._action = value;
@@ -81,9 +84,12 @@ export default class State extends cc.Component{
 
     static set mode(value: Mode){
         State._mode = value;
-        for(let observer of State.modeObsevers){
-            observer.ModeChanged(value);
-        }
+        // for(let observer of State.modeObsevers){
+        //     observer.ModeChanged(value);
+        // }
+        //将模式转变告知天下
+        MessageCenter.SendMessage(MessageType.TYPE_ANY,MessageCmd.CMD_MODECHANGED,value);
+
         switch(State._mode){
             case Mode.WAITMODE:
                 State.canPlace = false;

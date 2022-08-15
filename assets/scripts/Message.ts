@@ -22,7 +22,9 @@ export default class Message{
 }
 
 export enum MessageType{
+    TYPE_ANY,
     TYPE_UI
+    
 }
 
 export enum MessageCmd{
