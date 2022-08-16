@@ -41,7 +41,8 @@ export enum MessageCmd{
     CMD_BUILD_OVER, //建造次数用完
     CMD_MOVE_AVI, //移动次数可用
     CMD_ATTACK_AVI, //攻击次数可用
-    CMD_BUILD_AVI //建造次数可用
+    CMD_BUILD_AVI, //建造次数可用
+    CMD_MOVEING_DONE //完成移动
 
 }
 

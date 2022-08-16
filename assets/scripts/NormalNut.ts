@@ -186,6 +186,8 @@ export default class NormalNut extends ComponentBase implements PlacedItem,Nut{
             if(Math.abs(this.node.x-State.tarX)<=3&&Math.abs(this.node.y-State.tarY)<=3){
                 // this._moving = false;
                 State.action = Process.DO_NOTHING;
+                //MessageCenter.SendMessage(MessageType.TYPE_ANY,MessageCmd.CMD_MOVEING_DONE,null);
+                console.debug("发送消息次数重复？");
                 MessageCenter.SendMessage(MessageType.TYPE_ANY,MessageCmd.CMD_MOVECHANCE_CHANGED,-1);
             }
         }

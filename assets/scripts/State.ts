@@ -127,10 +127,15 @@ export default class State extends ManagerBase{
     static set moveRemainder(value){
         console.debug("当前的剩余数"+value);
         if(value == 0){
+            
             MessageCenter.SendMessage(MessageType.TYPE_UI,MessageCmd.CMD_MOVE_OVER,null);
+            console.debug("发送的管理员为：");
+            console.debug(this);
         }
         else if(!State._moveRemainder){
             MessageCenter.SendMessage(MessageType.TYPE_UI,MessageCmd.CMD_MOVE_AVI,null);
+            console.debug("发送的管理员为：");
+            console.debug(this);
         }
         State._moveRemainder = value;
     }
@@ -157,14 +162,9 @@ export default class State extends ManagerBase{
                 break;
 
             case MessageCmd.CMD_MOVECHANCE_CHANGED:
-                switch(msg.Content){
-                    case Action.MOVE:
-                        State.moveRemainder+=msg.Content;
-                        console.debug("剩余数改变");
-                        break;
-                }
-
-
+                console.debug("剩余数改变,改变后的值为"+(State.moveRemainder+msg.Content));
+                State.moveRemainder=State.moveRemainder+msg.Content;
+                break;
         }
     }
 
