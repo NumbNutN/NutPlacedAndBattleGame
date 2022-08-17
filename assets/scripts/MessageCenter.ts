@@ -27,8 +27,8 @@ export default class MessageCenter{
     static SendMessage(type:MessageType,command:MessageCmd,content:any){
         let msg = new Message(type,command,content);
         this.Send(msg);
-        console.debug("消息中心接收消息：");
-        console.debug(msg);
+        // console.debug("消息中心接收消息：");
+        // console.debug(msg);
     }
 
     //将管理者注册为消息订阅者

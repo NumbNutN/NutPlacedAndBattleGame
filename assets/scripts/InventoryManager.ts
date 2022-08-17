@@ -26,21 +26,23 @@ export default class InventoryManager extends cc.Component {
     // onLoad () {}
 
     start () {
-        //加载物品框(Item Frame)
-        let newFrame = cc.instantiate(this.itemFramePref);
-        newFrame.setParent(this.node);
-        newFrame.x = this._currentX;
-        newFrame.y = 0;
-        //物品框右移
-        this.framePush();
+        // //加载物品框(Item Frame)
+        // let newFrame = cc.instantiate(this.itemFramePref);
+        // newFrame.setParent(this.node);
+        // newFrame.x = this._currentX;
+        // newFrame.y = 0;
+        // //物品框右移
+        // this.framePush();
 
-        let newItem = new cc.Node();
-        newItem.setParent(newFrame);
-        newItem.addComponent(cc.Sprite);
-        cc.loader.loadRes("nut_01",cc.SpriteFrame,(err,sp)=>{
-            newItem.getComponent(cc.Sprite).spriteFrame = sp;
-        });
-        newItem.setPosition(0,0);
+        // let newItem = new cc.Node();
+        // newItem.setParent(newFrame);
+        // newItem.addComponent(cc.Sprite);
+        // cc.loader.loadRes("nut_01",cc.SpriteFrame,(err,sp)=>{
+        //     newItem.getComponent(cc.Sprite).spriteFrame = sp;
+        // });
+        // newItem.setPosition(0,0);
+        this.create("nut_01");
+        this.create("wall");
     }
 
     // update (dt) {}

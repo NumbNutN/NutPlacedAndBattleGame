@@ -43,18 +43,17 @@ export default class NewClass extends ComponentBase {
             // this._canMove = false;
         })
         this.node.on(cc.Node.EventType.MOUSE_DOWN,(event)=>{
-            console.debug("click the radius");  //tick
-            //this.saveMoveState(event);
-            let tarLoc: number[] = [event.getLocation().x,event.getLocation().y];
-            MessageCenter.SendMessage(MessageType.TYPE_STATE,MessageCmd.CMD_SET_NUT_TARGET_LOCATION,tarLoc);
-            // State.tarX = event.getLocation().x;
-            // State.tarY = event.getLocation().y;
-            // NormalNut.Instance().tarX = event.getX;
-            // NormalNut.Instance().tarY = event.getY;
-            this.node.destroy();
-            
-            State.action = Process.MOVING;
-
+            if(State.canMove){
+                //this.saveMoveState(event);
+                let tarLoc: number[] = [event.getLocation().x,event.getLocation().y];
+                MessageCenter.SendMessage(MessageType.TYPE_STATE,MessageCmd.CMD_SET_NUT_TARGET_LOCATION,tarLoc);
+                // State.tarX = event.getLocation().x;
+                // State.tarY = event.getLocation().y;
+                // NormalNut.Instance().tarX = event.getX;
+                // NormalNut.Instance().tarY = event.getY;
+                this.node.destroy();
+                State.action = Process.MOVING;
+            }
             
         })
 

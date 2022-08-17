@@ -10,7 +10,7 @@ import ComponentBase from "./ComponentBase";
 import {PlacedItem,Nut,ValueObsever} from "./Interface"
 import { MessageCmd, MessageType } from "./Message";
 import MessageCenter from "./MessageCenter";
-import State, { Action } from "./State"
+import State, { Action, Owner } from "./State"
 import { Mode,Process } from "./State";
 
 @ccclass
@@ -39,9 +39,14 @@ export default class NormalNut extends ComponentBase implements PlacedItem,Nut{
     @property(cc.Prefab)
     moveRadiusPref: cc.Prefab = null;
 
+    @property(cc.Prefab)
+    ringPref: cc.Prefab = null;
+
     private static _instance :NormalNut = null;
 
     valueObserver: Array<any> = new Array<any>();
+
+    private owner: Owner = Owner.SELF;
 
     private _heal: number = 100;
     private fullHeal: number = 100;
@@ -142,6 +147,26 @@ export default class NormalNut extends ComponentBase implements PlacedItem,Nut{
         shieldBarFrame.setPosition(0,40);
 
 
+        // let ring = cc.instantiate(this.ringPref);
+        let ring = new cc.Node();
+        ring.addComponent(cc.Sprite);
+        ring.setParent(this.node);
+        ring.setPosition(0,-20);
+        //根据敌我生成光环
+        switch(this.owner){
+            case Owner.SELF:
+                cc.loader.loadRes("blue_ring",cc.SpriteFrame,(err,sp)=>{
+                    ring.getComponent(cc.Sprite).spriteFrame = sp;
+                });
+                break;
+            case Owner.ENEMY:
+                cc.loader.loadRes("red_ring",cc.SpriteFrame,(err,sp)=>{
+                    ring.getComponent(cc.Sprite).spriteFrame = sp;
+                });
+                break;
+        }
+
+
         this.node.on(cc.Node.EventType.MOUSE_ENTER,(event)=>{
             if(!this._cursorAimedFrame){
                 this._cursorAimedFrame = cc.instantiate(this.cursorAimedFramePref);
@@ -187,8 +212,12 @@ export default class NormalNut extends ComponentBase implements PlacedItem,Nut{
                 // this._moving = false;
                 State.action = Process.DO_NOTHING;
                 //MessageCenter.SendMessage(MessageType.TYPE_ANY,MessageCmd.CMD_MOVEING_DONE,null);
-                console.debug("发送消息次数重复？");
-                MessageCenter.SendMessage(MessageType.TYPE_ANY,MessageCmd.CMD_MOVECHANCE_CHANGED,-1);
+                console.debug("发送消息2");
+                let dic: {[key:string]:any} = {
+                    sender:this,
+                    value:-1
+                }
+                MessageCenter.SendMessage(MessageType.TYPE_ANY,MessageCmd.CMD_MOVECHANCE_CHANGED,dic);
             }
         }
 

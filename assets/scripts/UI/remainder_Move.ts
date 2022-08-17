@@ -21,7 +21,7 @@ export default class RemainderMove extends ComponentBase {
 
     ReceiveMessage(msg: Message): void {
         if(msg.Command == MessageCmd.CMD_MOVECHANCE_CHANGED){
-            this.node.getComponent(cc.Label).string = (State.moveRemainder+msg.Content) as string;
+            this.node.getComponent(cc.Label).string = (State.moveRemainder+msg.Content["value"]) as string;
         }
     }
 }

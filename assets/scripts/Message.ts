@@ -24,7 +24,8 @@ export default class Message{
 export enum MessageType{
     TYPE_ANY,  //向所有的管理层寄送
     TYPE_UI,
-    TYPE_STATE
+    TYPE_STATE,
+    TYPE_BUILD
     
 }
 

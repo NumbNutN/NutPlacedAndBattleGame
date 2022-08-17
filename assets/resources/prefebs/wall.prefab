@@ -13,7 +13,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "normalNut",
+    "_name": "wall",
     "_objFlags": 0,
     "_parent": null,
     "_children": [],
@@ -21,13 +21,10 @@
     "_components": [
       {
         "__id__": 2
-      },
-      {
-        "__id__": 3
       }
     ],
     "_prefab": {
-      "__id__": 4
+      "__id__": 3
     },
     "_opacity": 255,
     "_color": {
@@ -39,8 +36,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 33,
-      "height": 40
+      "width": 48,
+      "height": 17
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -51,8 +48,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        796,
-        312,
+        376,
+        359,
         0,
         0,
         0,
@@ -92,10 +89,10 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "9e6f59a8-9156-40f7-96e4-d3d040955a78"
+      "__uuid__": "b121ef29-851c-435f-bd6a-fa9788917ed3"
     },
     "_type": 0,
-    "_sizeMode": 0,
+    "_sizeMode": 1,
     "_fillType": 0,
     "_fillCenter": {
       "__type__": "cc.Vec2",
@@ -106,36 +103,6 @@
     "_fillRange": 0,
     "_isTrimmedMode": true,
     "_atlas": null,
-    "_id": ""
-  },
-  {
-    "__type__": "759f0U6qz5MkaRCWvTIjrGr",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 1
-    },
-    "_enabled": true,
-    "label": null,
-    "text": "hello",
-    "cursorAimedFramePref": {
-      "__uuid__": "0813adb3-4289-44fd-8466-e6f013c35119"
-    },
-    "barPref": {
-      "__uuid__": "b9515647-095f-4f52-81df-039f110ea704"
-    },
-    "healBarPref": {
-      "__uuid__": "34252fa0-4174-42b9-9f04-11278dfe43a3"
-    },
-    "shieldBarPref": {
-      "__uuid__": "c20fa79f-b39b-4002-8b52-bb8e3977ccae"
-    },
-    "moveRadiusPref": {
-      "__uuid__": "a70423af-fb86-42c1-95cd-dd3e7d07976c"
-    },
-    "ringPref": {
-      "__uuid__": "2b1b3c36-b8b2-4a70-a22f-9d5f25f11a43"
-    },
     "_id": ""
   },
   {

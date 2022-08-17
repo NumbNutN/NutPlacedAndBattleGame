@@ -11,14 +11,15 @@ import MessageCenter from "./MessageCenter";
 const {ccclass, property} = cc._decorator;
 
 export enum SelectedComp{
-    normalNut,
-    sceneNut
+    NORMAL_NUT,
+    WALL
 }
 
 export enum Mode{
     WAITMODE,
     OPERATEMODE,
-    MOVEMODE
+    MOVEMODE,
+    BUILDMODE
     
 }
 
@@ -35,6 +36,11 @@ export enum Action{
     ATTACK
 }
 
+export enum Owner{
+    SELF,
+    ENEMY
+}
+
 //我的第一个共享类
 
 @ccclass
@@ -48,11 +54,13 @@ export default class State extends ManagerBase{
 
     private static _instance;
 
-    static selectedComp: SelectedComp;
+    static _selectedComp: SelectedComp;
 
     static canPlace: boolean = true;
     static canAttack: boolean;
-    static canMove: boolean;
+    static canMove: boolean = true;
+
+    static canPlaceNut: boolean = true;
 
     static placeRemainder: number = 5;
     static _moveRemainder: number = 1;
@@ -68,6 +76,14 @@ export default class State extends ManagerBase{
     onLoad(){
         super.onLoad();
 
+    }
+
+    static set selectedComp(value){
+        this._selectedComp = value;
+        switch(value){
+            case SelectedComp.WALL:
+                this.mode = Mode.BUILDMODE;
+        }
     }
 
     //static actionObsevers: Array<ActionObsever> = new Array<ActionObsever>();
@@ -113,9 +129,11 @@ export default class State extends ManagerBase{
                 State.canMove = false;
                 break;
             case Mode.OPERATEMODE:
-                State.canPlace = true;
-                State.canAttack = true;
-                State.canMove = true;
+                // State.canPlace = true;
+                // State.canAttack = true;
+                // State.canMove = true;
+                break;
+            case Mode.BUILDMODE:
                 break;
         }
     }
@@ -127,10 +145,10 @@ export default class State extends ManagerBase{
     static set moveRemainder(value){
         console.debug("当前的剩余数"+value);
         if(value == 0){
-            
             MessageCenter.SendMessage(MessageType.TYPE_UI,MessageCmd.CMD_MOVE_OVER,null);
             console.debug("发送的管理员为：");
             console.debug(this);
+            State.canMove = false;
         }
         else if(!State._moveRemainder){
             MessageCenter.SendMessage(MessageType.TYPE_UI,MessageCmd.CMD_MOVE_AVI,null);
@@ -148,6 +166,7 @@ export default class State extends ManagerBase{
         if(msg.Type != this.messageType && msg.Type){
             return;
         }
+        console.debug("接收到消息"+msg.Command);  //两次
         switch(msg.Command){
             //接收要移动的nut的地址
             case MessageCmd.CMD_NUT_TO_MOVE:
@@ -160,10 +179,11 @@ export default class State extends ManagerBase{
                 State.tarY = msg.Content[1];
                 console.debug("已存储目标坐标 x:"+State.tarX+" y: "+State.tarY);
                 break;
-
             case MessageCmd.CMD_MOVECHANCE_CHANGED:
-                console.debug("剩余数改变,改变后的值为"+(State.moveRemainder+msg.Content));
-                State.moveRemainder=State.moveRemainder+msg.Content;
+                console.debug("改变数值发送者为：");
+                console.debug(msg.Content["sender"]);
+                console.debug("剩余数改变,改变后的值为"+(State.moveRemainder+msg.Content["value"]));
+                State.moveRemainder=State.moveRemainder+msg.Content["value"];
                 break;
         }
     }

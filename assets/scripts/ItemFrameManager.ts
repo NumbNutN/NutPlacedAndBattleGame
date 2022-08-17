@@ -28,10 +28,9 @@ export default class ItemFrameManager extends cc.Component implements Selectable
     // onLoad () {}
 
     start () {
-        let self = this;
         this.node.on(cc.Node.EventType.MOUSE_DOWN,(event)=>{
             if(!State.selectedComp){
-                State.selectedComp = SelectedComp.normalNut;
+                State.selectedComp = SelectedComp.NORMAL_NUT;
                 let suspendItem = cc.instantiate(this.suspendItemPref);
                 suspendItem.setParent(cc.director.getScene());
                 suspendItem.setPosition(event.getLocation());

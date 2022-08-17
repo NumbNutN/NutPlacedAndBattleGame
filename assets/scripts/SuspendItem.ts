@@ -36,9 +36,11 @@ export default class suspendItem extends cc.Component {
             if(State.canPlace){
                 this.node.destroy();
                 switch(State.selectedComp){
-                    case SelectedComp.normalNut:
+                    case SelectedComp.NORMAL_NUT:
                         this.itemPrefName = "normalNut";
                         break;
+                    case SelectedComp.WALL:
+                        this.itemPrefName = "wall";
                 }
             }
             if(this.itemPrefName){

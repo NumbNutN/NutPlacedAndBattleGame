@@ -6,23 +6,19 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const {ccclass, property} = cc._decorator;
-
+import UIManager from "../UIManager";
+import Message from "../Message";
+import { MessageType,MessageCmd } from "../Message";
 @ccclass
 export default class NewClass extends cc.Component {
 
-    @property(cc.Label)
-    label: cc.Label = null;
-
-    @property
-    text: string = 'hello';
-
-    // LIFE-CYCLE CALLBACKS:
-
-    // onLoad () {}
-
-    start () {
-
+    onLoad(){
+        UIManager.Instance.RegisterReceiver(this);
     }
 
-    // update (dt) {}
+    ReceiveMessage(msg: Message): void {
+        if(msg.Type == MessageType.TYPE_UI && msg.Command == MessageCmd.CMD_BUILD_OVER){
+            this.node.opacity = 60;
+        }
+    }
 }
