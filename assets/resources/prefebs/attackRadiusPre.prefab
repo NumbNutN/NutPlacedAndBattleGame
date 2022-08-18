@@ -13,7 +13,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "moveRadiusPre",
+    "_name": "attackRadius",
     "_objFlags": 0,
     "_parent": null,
     "_children": [],
@@ -39,8 +39,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 200,
-      "height": 200
+      "width": 193,
+      "height": 193
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -51,8 +51,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        466.831,
-        218.362,
+        356,
+        207,
         0,
         0,
         0,
@@ -92,10 +92,10 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "eca8503a-5027-4bdd-bf69-cc5190dad960"
+      "__uuid__": "31aa4864-9aac-47fe-90b1-e542b865e31e"
     },
     "_type": 0,
-    "_sizeMode": 0,
+    "_sizeMode": 1,
     "_fillType": 0,
     "_fillCenter": {
       "__type__": "cc.Vec2",
@@ -109,7 +109,7 @@
     "_id": ""
   },
   {
-    "__type__": "13024HQ+UJHIb4siGf4mqxi",
+    "__type__": "2bbbe4sDpRIOphDRTaKIgt8",
     "_name": "",
     "_objFlags": 0,
     "node": {

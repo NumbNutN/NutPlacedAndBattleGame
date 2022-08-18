@@ -8,13 +8,14 @@
 const {ccclass, property} = cc._decorator;
 import ComponentBase from "./ComponentBase";
 import {PlacedItem,Nut,ValueObsever} from "./Interface"
-import { MessageCmd, MessageType } from "./Message";
+import Message, { MessageCmd, MessageType } from "./Message";
 import MessageCenter from "./MessageCenter";
-import State, { Action, Owner } from "./State"
+import NutManager from "./NutManager";
+import State, { Action, Owner, SelectedComp } from "./State"
 import { Mode,Process } from "./State";
 
 @ccclass
-export default class NormalNut extends ComponentBase implements PlacedItem,Nut{
+export default class NormalNut extends ComponentBase implements Nut{
 
     @property(cc.Label)
     label: cc.Label = null;
@@ -54,6 +55,8 @@ export default class NormalNut extends ComponentBase implements PlacedItem,Nut{
     private fullShield: number = 50;
     private _actionRandom: number = 10;
     private _atk: number = 10;
+
+    hasMoveInThisRound: boolean;
 
     tarX: number;
     tarY: number;
@@ -123,7 +126,8 @@ export default class NormalNut extends ComponentBase implements PlacedItem,Nut{
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
-        super.onLoad();
+        NutManager.Instance.RegisterReceiver(this);
+        this.hasMoveInThisRound = false;
     }
 
     start () {
@@ -184,7 +188,8 @@ export default class NormalNut extends ComponentBase implements PlacedItem,Nut{
 
         this.node.on(cc.Node.EventType.MOUSE_DOWN,(event)=>{
             //是否进入操作模式
-            if(State.mode == Mode.OPERATEMODE){
+            if(State.mode == Mode.OPERATEMODE)
+            if(State.mode == Mode.OPERATEMODE && this.hasMoveInThisRound == false){
                 
                 //储存当前的(x,y)坐标
                 this.lastX = this.node.x;
@@ -195,6 +200,7 @@ export default class NormalNut extends ComponentBase implements PlacedItem,Nut{
                 //this._moving = true;  局部状态，错误的
                 //把当前Nut节点寄存到State
                 //State.actionNut = this;  被信息中心取代
+                State.selectedComp = SelectedComp.NUT_IN_GROUND;
                 MessageCenter.SendMessage(MessageType.TYPE_ANY,MessageCmd.CMD_NUT_TO_MOVE,this);
                 
             }
@@ -218,9 +224,15 @@ export default class NormalNut extends ComponentBase implements PlacedItem,Nut{
                     value:-1
                 }
                 MessageCenter.SendMessage(MessageType.TYPE_ANY,MessageCmd.CMD_MOVECHANCE_CHANGED,dic);
+                this.hasMoveInThisRound = true;
             }
         }
 
+    }
+    ReceiveMessage(msg: Message): void {
+        if(msg.Command == MessageCmd.CMD_ROUND_OVER){
+            this.hasMoveInThisRound = false;
+        }
     }
     onMouseMove() {
         

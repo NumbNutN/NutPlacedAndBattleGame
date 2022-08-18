@@ -25,7 +25,9 @@ export enum MessageType{
     TYPE_ANY,  //向所有的管理层寄送
     TYPE_UI,
     TYPE_STATE,
-    TYPE_BUILD
+    TYPE_BUILD,
+    TYPE_WINDOW,
+    TYPE_NUT
     
 }
 
@@ -43,7 +45,8 @@ export enum MessageCmd{
     CMD_MOVE_AVI, //移动次数可用
     CMD_ATTACK_AVI, //攻击次数可用
     CMD_BUILD_AVI, //建造次数可用
-    CMD_MOVEING_DONE //完成移动
+    CMD_MOVEING_DONE, //完成移动
+    CMD_ROUND_OVER //本回合结束
 
 }
 

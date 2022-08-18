@@ -12,14 +12,16 @@ const {ccclass, property} = cc._decorator;
 
 export enum SelectedComp{
     NORMAL_NUT,
-    WALL
+    WALL,
+    NUT_IN_GROUND
 }
 
 export enum Mode{
     WAITMODE,
     OPERATEMODE,
     MOVEMODE,
-    BUILDMODE
+    BUILDMODE,
+    ATTACKMODE
     
 }
 
@@ -59,6 +61,7 @@ export default class State extends ManagerBase{
     static canPlace: boolean = true;
     static canAttack: boolean;
     static canMove: boolean = true;
+    static canBuildWall: boolean = true;
 
     static canPlaceNut: boolean = true;
 
@@ -73,6 +76,8 @@ export default class State extends ManagerBase{
     static lastX: number;
     static lastY: number;
 
+    static clickNutMode: number  = 0;   //0代表移动模式  1代表攻击
+
     onLoad(){
         super.onLoad();
 
@@ -84,6 +89,10 @@ export default class State extends ManagerBase{
             case SelectedComp.WALL:
                 this.mode = Mode.BUILDMODE;
         }
+    }
+
+    static get selectedComp(){
+        return this._selectedComp;
     }
 
     //static actionObsevers: Array<ActionObsever> = new Array<ActionObsever>();
@@ -121,12 +130,14 @@ export default class State extends ManagerBase{
         // }
         //将模式转变告知天下
         MessageCenter.SendMessage(MessageType.TYPE_ANY,MessageCmd.CMD_MODECHANGED,value);
+        console.debug("模式转变");
 
         switch(State._mode){
             case Mode.WAITMODE:
                 State.canPlace = false;
                 State.canAttack = false;
                 State.canMove = false;
+                console.debug("等待模式");
                 break;
             case Mode.OPERATEMODE:
                 // State.canPlace = true;
@@ -134,6 +145,7 @@ export default class State extends ManagerBase{
                 // State.canMove = true;
                 break;
             case Mode.BUILDMODE:
+                console.debug("建筑模式");
                 break;
         }
     }
@@ -166,25 +178,30 @@ export default class State extends ManagerBase{
         if(msg.Type != this.messageType && msg.Type){
             return;
         }
-        console.debug("接收到消息"+msg.Command);  //两次
+        // console.debug("接收到消息"+msg.Command);  //两次
         switch(msg.Command){
-            //接收要移动的nut的地址
             case MessageCmd.CMD_NUT_TO_MOVE:
+                //当用户指定一个小人时
                 //游戏模式修改为移动模式
                 State.mode = Mode.MOVEMODE;
                 State.actionNut = msg.Content;
                 break;
             case MessageCmd.CMD_SET_NUT_TARGET_LOCATION:
+                //当用户确认一个小人将要移动到指定位置时
                 State.tarX = msg.Content[0];
                 State.tarY = msg.Content[1];
                 console.debug("已存储目标坐标 x:"+State.tarX+" y: "+State.tarY);
                 break;
             case MessageCmd.CMD_MOVECHANCE_CHANGED:
+                //当小人完成行动时
                 console.debug("改变数值发送者为：");
                 console.debug(msg.Content["sender"]);
                 console.debug("剩余数改变,改变后的值为"+(State.moveRemainder+msg.Content["value"]));
                 State.moveRemainder=State.moveRemainder+msg.Content["value"];
                 break;
+            case MessageCmd.CMD_ROUND_OVER:
+                //当一个回合结束后
+                State.mode = Mode.OPERATEMODE;
         }
     }
 

@@ -12,7 +12,7 @@ import State from "./State";
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class ItemFrameManager extends cc.Component implements SelectableCompo{
+export default class ItemFrameManager extends cc.Component{
 
     @property(cc.Label)
     label: cc.Label = null;
@@ -28,14 +28,14 @@ export default class ItemFrameManager extends cc.Component implements Selectable
     // onLoad () {}
 
     start () {
-        this.node.on(cc.Node.EventType.MOUSE_DOWN,(event)=>{
-            if(!State.selectedComp){
-                State.selectedComp = SelectedComp.NORMAL_NUT;
-                let suspendItem = cc.instantiate(this.suspendItemPref);
-                suspendItem.setParent(cc.director.getScene());
-                suspendItem.setPosition(event.getLocation());
-            }
-        })
+        // this.node.on(cc.Node.EventType.MOUSE_DOWN,(event)=>{
+        //     if(!State.selectedComp){
+        //         State.selectedComp = SelectedComp.NORMAL_NUT;
+        //         let suspendItem = cc.instantiate(this.suspendItemPref);
+        //         suspendItem.setParent(cc.director.getScene());
+        //         suspendItem.setPosition(event.getLocation());
+        //     }
+        // })
     }
 
     // update (dt) {}

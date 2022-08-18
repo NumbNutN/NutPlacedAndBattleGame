@@ -8,7 +8,6 @@
 import ComponentBase from "./ComponentBase";
 import { MessageCmd, MessageType } from "./Message";
 import MessageCenter from "./MessageCenter";
-import NormalNut from "./NormalNut";
 import State from "./State";
 import { Process } from "./State";
 const {ccclass, property} = cc._decorator;

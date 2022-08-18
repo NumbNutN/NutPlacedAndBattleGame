@@ -26,23 +26,9 @@ export default class InventoryManager extends cc.Component {
     // onLoad () {}
 
     start () {
-        // //加载物品框(Item Frame)
-        // let newFrame = cc.instantiate(this.itemFramePref);
-        // newFrame.setParent(this.node);
-        // newFrame.x = this._currentX;
-        // newFrame.y = 0;
-        // //物品框右移
-        // this.framePush();
-
-        // let newItem = new cc.Node();
-        // newItem.setParent(newFrame);
-        // newItem.addComponent(cc.Sprite);
-        // cc.loader.loadRes("nut_01",cc.SpriteFrame,(err,sp)=>{
-        //     newItem.getComponent(cc.Sprite).spriteFrame = sp;
-        // });
-        // newItem.setPosition(0,0);
-        this.create("nut_01");
-        this.create("wall");
+        
+        this.create("item_NormalNut");
+        this.create("item_Wall");
     }
 
     // update (dt) {}
@@ -60,13 +46,27 @@ export default class InventoryManager extends cc.Component {
         //物品框右移
         this.framePush();
 
-        let newItem = new cc.Node();
-        newItem.setParent(newFrame);
-        newItem.addComponent(cc.Sprite);
-        cc.loader.loadRes(res,cc.SpriteFrame,(err,sp)=>{
-            newItem.getComponent(cc.Sprite).spriteFrame = sp;
-        });
-        newItem.setPosition(0,0);
+        // let newItem = new cc.Node();
+        // newItem.setParent(newFrame);
+        // newItem.addComponent(cc.Sprite);
+        // cc.loader.loadRes(res,cc.SpriteFrame,(err,sp)=>{
+        //     newItem.getComponent(cc.Sprite).spriteFrame = sp;
+        // });
+        // newItem.setPosition(0,0);
+
+        let item: cc.Node;
+        cc.loader.loadRes("./prefebs/"+res,cc.Prefab,(err,pf)=>{
+            if(!pf){
+                console.debug("预制体为空");
+            }
+            item = cc.instantiate(pf);
+            if(!item){
+                console.debug("节点为空");
+            }
+            //绕过异步的问题
+            item.setParent(newFrame);
+            item.setPosition(0,0); 
+        })
         
     }
 

@@ -5,13 +5,14 @@
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
+import ComponentBase from "./ComponentBase";
 import ItemFrameManager from "./ItemFrameManager";
 import State, { SelectedComp } from "./State";
 
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class suspendItem extends cc.Component {
+export default class suspendItem extends ComponentBase {
 
     @property(cc.Label)
     label: cc.Label = null;
@@ -33,6 +34,8 @@ export default class suspendItem extends cc.Component {
         })
 
         this.node.on(cc.Node.EventType.MOUSE_DOWN,(event)=>{
+            event.stopPropagation();
+            console.debug("悬浮物件生成");
             if(State.canPlace){
                 this.node.destroy();
                 switch(State.selectedComp){
@@ -41,8 +44,11 @@ export default class suspendItem extends cc.Component {
                         break;
                     case SelectedComp.WALL:
                         this.itemPrefName = "wall";
+                        break;
                 }
             }
+            console.debug(State.selectedComp);
+            console.debug(this.itemPrefName);
             if(this.itemPrefName){
                 console.debug("Now itemPrefName is"+this.itemPrefName);
                 cc.loader.loadRes("./prefebs/"+this.itemPrefName,cc.Prefab,(err,pf)=>{
@@ -57,7 +63,6 @@ export default class suspendItem extends cc.Component {
                     item.setParent(cc.director.getScene());
                     item.setPosition(event.getLocation()); 
                 })
-                  
                 
             }
         })

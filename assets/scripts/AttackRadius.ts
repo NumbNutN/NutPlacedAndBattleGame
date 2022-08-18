@@ -5,13 +5,14 @@
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
-import ManagerBase from "./ManagerBase";
-import Message, { MessageType } from "./Message";
-
 const {ccclass, property} = cc._decorator;
+import State,{Process} from "./State";
+import MessageCenter from "./MessageCenter";
+import { MessageType,MessageCmd } from "./Message";
+
 
 @ccclass
-export default class NutManager extends ManagerBase {
+export default class NewClass extends cc.Component {
 
     @property(cc.Label)
     label: cc.Label = null;
@@ -19,35 +20,18 @@ export default class NutManager extends ManagerBase {
     @property
     text: string = 'hello';
 
-    @property
-    normalNutHeal :number = 100;
-    @property
-    normalNutShield: number = 50;
-
-    static Instance: ManagerBase;
-
-
-
-
     // LIFE-CYCLE CALLBACKS:
 
-    SetMessageType(): MessageType {
-        return MessageType.TYPE_NUT;
-    }
-
-    onLoad () {
-        super.onLoad();
-        NutManager.Instance = this;
-
-    }
+    // onLoad () {}
 
     start () {
-        
+        this.node.on(cc.Node.EventType.MOUSE_ENTER,(event)=>{
+            State.canAttack = true;
+        })
 
+        this.node.on(cc.Node.EventType.MOUSE_LEAVE,(event)=>{
+            State.canAttack = false;
+        })
     }
-
-
     // update (dt) {}
-
-
 }

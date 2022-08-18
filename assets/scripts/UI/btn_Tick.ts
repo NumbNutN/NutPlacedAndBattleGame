@@ -6,37 +6,50 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
 import ComponentBase from "../ComponentBase";
-import Message, { MessageCmd, MessageType } from "../Message";
+import Message, { MessageCmd } from "../Message";
 import State, { Mode } from "../State";
 import UIManager from "../UIManager";
 
 const {ccclass, property} = cc._decorator;
 
 @ccclass
-export default class Icon_canMove extends ComponentBase{
+export default class NewClass extends ComponentBase {
 
-    onLoad(){
+    @property(cc.Label)
+    label: cc.Label = null;
+
+    @property
+    text: string = 'hello';
+
+    // @property(cc.Prefab)
+    // tickPref: cc.Prefab = null;
+
+    // LIFE-CYCLE CALLBACKS:
+
+    onLoad () {
         UIManager.Instance.RegisterReceiver(this);
+    }
+
+    start () {
+        this.node.opacity = 0;
 
         this.node.on(cc.Node.EventType.MOUSE_DOWN,(event)=>{
-            if(State.mode == Mode.MOVEMODE){
-                return;
+            if(State.mode == Mode.BUILDMODE){
+                State.mode = Mode.OPERATEMODE;
             }
-            State.mode = Mode.MOVEMODE;
         })
+
     }
 
     ReceiveMessage(msg: Message): void {
-        switch(msg.Command){
-            case MessageCmd.CMD_MOVE_OVER:
-                this.node.opacity = 60;
-                break;
-            case MessageCmd.CMD_MOVE_AVI:
+        if(msg.Command == MessageCmd.CMD_MODECHANGED){
+            if(msg.Content == Mode.BUILDMODE){
                 this.node.opacity = 255;
-                break;
+            }
         }
-        
     }
 
+    
 
+    // update (dt) {}
 }
