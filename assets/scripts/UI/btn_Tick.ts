@@ -46,6 +46,9 @@ export default class NewClass extends ComponentBase {
             if(msg.Content == Mode.BUILDMODE){
                 this.node.opacity = 255;
             }
+            else{
+                this.node.opacity = 0;
+            }
         }
     }
 

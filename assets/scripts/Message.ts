@@ -27,7 +27,8 @@ export enum MessageType{
     TYPE_STATE,
     TYPE_BUILD,
     TYPE_WINDOW,
-    TYPE_NUT
+    TYPE_NUT,
+    TYPE_EFFECT
     
 }
 
@@ -46,7 +47,8 @@ export enum MessageCmd{
     CMD_ATTACK_AVI, //攻击次数可用
     CMD_BUILD_AVI, //建造次数可用
     CMD_MOVEING_DONE, //完成移动
-    CMD_ROUND_OVER //本回合结束
+    CMD_ROUND_OVER, //本回合结束
+    CMD_CLICK_NUT_ACTION_CHANGED //单击小人的逻辑改变
 
 }
 

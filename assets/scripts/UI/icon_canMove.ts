@@ -7,7 +7,7 @@
 
 import ComponentBase from "../ComponentBase";
 import Message, { MessageCmd, MessageType } from "../Message";
-import State, { Mode } from "../State";
+import State, { ClickNutAction, Mode, SelectedComp } from "../State";
 import UIManager from "../UIManager";
 
 const {ccclass, property} = cc._decorator;
@@ -19,12 +19,15 @@ export default class Icon_canMove extends ComponentBase{
         UIManager.Instance.RegisterReceiver(this);
 
         this.node.on(cc.Node.EventType.MOUSE_DOWN,(event)=>{
-            if(State.mode == Mode.MOVEMODE){
-                return;
+            State.clickNutAction = ClickNutAction.MOVE; // 点击小人后为移动模式
+            if(State.selectedComp == SelectedComp.NUT_IN_GROUND){
+                if(State.mode == Mode.MOVEMODE){
+                    return;
+                }
+                State.mode = Mode.MOVEMODE;
             }
-            State.mode = Mode.MOVEMODE;
         })
-    }
+    }       
 
     ReceiveMessage(msg: Message): void {
         switch(msg.Command){

@@ -6,13 +6,15 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const {ccclass, property} = cc._decorator;
-import State,{Process} from "./State";
+import State,{ClickNutAction, Process} from "./State";
 import MessageCenter from "./MessageCenter";
-import { MessageType,MessageCmd } from "./Message";
+import Message, { MessageType,MessageCmd } from "./Message";
+import EffectManager from "./EffectMnanger";
+import ComponentBase from "./ComponentBase";
 
 
 @ccclass
-export default class NewClass extends cc.Component {
+export default class NewClass extends ComponentBase {
 
     @property(cc.Label)
     label: cc.Label = null;
@@ -22,7 +24,9 @@ export default class NewClass extends cc.Component {
 
     // LIFE-CYCLE CALLBACKS:
 
-    // onLoad () {}
+    onLoad () {
+        EffectManager.Instance.RegisterReceiver(this);
+    }
 
     start () {
         this.node.on(cc.Node.EventType.MOUSE_ENTER,(event)=>{
@@ -33,5 +37,16 @@ export default class NewClass extends cc.Component {
             State.canAttack = false;
         })
     }
+
+    ReceiveMessage(msg: Message): void {
+        if(msg.Command == MessageCmd.CMD_CLICK_NUT_ACTION_CHANGED){
+            if(msg.Content != ClickNutAction.ATTACK){
+                EffectManager.Instance.ReceiveList.splice(EffectManager.Instance.ReceiveList.indexOf(this),1);
+                this.node.destroy();
+            }
+        }
+    }
+
+
     // update (dt) {}
 }

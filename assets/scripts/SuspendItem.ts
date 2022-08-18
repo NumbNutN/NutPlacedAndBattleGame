@@ -29,7 +29,7 @@ export default class suspendItem extends ComponentBase {
 
     start () {
         let item: cc.Node;
-        this.node.on(cc.Node.EventType.MOUSE_MOVE,(event)=>{
+        this.node.on(cc.Node.EventType.TOUCH_MOVE,(event)=>{
             this.node.setPosition(event.getLocation());
         })
 

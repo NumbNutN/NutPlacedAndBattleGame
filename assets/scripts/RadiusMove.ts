@@ -6,9 +6,10 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
 import ComponentBase from "./ComponentBase";
-import { MessageCmd, MessageType } from "./Message";
+import EffectManager from "./EffectMnanger";
+import Message, { MessageCmd, MessageType } from "./Message";
 import MessageCenter from "./MessageCenter";
-import State from "./State";
+import State, { ClickNutAction } from "./State";
 import { Process } from "./State";
 const {ccclass, property} = cc._decorator;
 
@@ -23,7 +24,9 @@ export default class NewClass extends ComponentBase {
 
     // LIFE-CYCLE CALLBACKS:
 
-    // onLoad () {}
+    onLoad () {
+        EffectManager.Instance.RegisterReceiver(this);
+    }
 
     // //存储小人移动前的状态
     // saveMoveState(event){
@@ -50,13 +53,22 @@ export default class NewClass extends ComponentBase {
                 // State.tarY = event.getLocation().y;
                 // NormalNut.Instance().tarX = event.getX;
                 // NormalNut.Instance().tarY = event.getY;
+                EffectManager.Instance.ReceiveList.splice(EffectManager.Instance.ReceiveList.indexOf(this),1);
                 this.node.destroy();
                 State.action = Process.MOVING;
+                console.debug(State.actionNut);
             }
             
         })
+    }
 
-        
+    ReceiveMessage(msg: Message): void {
+        if(msg.Command == MessageCmd.CMD_CLICK_NUT_ACTION_CHANGED){
+            if(msg.Content != ClickNutAction.MOVE){
+                EffectManager.Instance.ReceiveList.splice(EffectManager.Instance.ReceiveList.indexOf(this),1);
+                this.node.destroy();
+            }
+        }
     }
 
     // update (dt) {}

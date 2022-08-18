@@ -41,6 +41,10 @@ export default class NutManager extends ManagerBase {
 
     }
 
+    static moveChanceInNewRound():number{
+        return this.Instance.ReceiveList.length;
+    }
+
     start () {
         
 

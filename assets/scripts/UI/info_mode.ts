@@ -55,6 +55,10 @@ export default class Info_Mode extends ComponentBase{
                     break;
                 case Mode.BUILDMODE:
                     this.node.getComponent(cc.Label).string = "建筑模式";
+                    break;
+                case Mode.ATTACKMODE:
+                    this.node.getComponent(cc.Label).string = "攻击模式";
+                    break;
             }
         }
     }

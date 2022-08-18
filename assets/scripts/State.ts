@@ -4,6 +4,7 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/reference/attributes.html
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
+import ComponentBase from "./ComponentBase";
 import { Nut} from "./Interface";
 import ManagerBase from "./ManagerBase";
 import Message, { MessageCmd, MessageType } from "./Message";
@@ -43,6 +44,11 @@ export enum Owner{
     ENEMY
 }
 
+export enum ClickNutAction{
+    MOVE,
+    ATTACK
+}
+
 //我的第一个共享类
 
 @ccclass
@@ -70,19 +76,32 @@ export default class State extends ManagerBase{
 
     private static _mode :Mode = Mode.OPERATEMODE;
 
-    static actionNut: Nut = null;
+    static actionNut: ComponentBase = null;
     static tarX: number;
     static tarY: number;
     static lastX: number;
     static lastY: number;
 
-    static clickNutMode: number  = 0;   //0代表移动模式  1代表攻击
+    static _clickNutAction: ClickNutAction  = ClickNutAction.MOVE;   //0代表移动模式  1代表攻击
 
     onLoad(){
         super.onLoad();
 
     }
 
+    static get clickNutAction(){
+        return this._clickNutAction;
+    }
+
+    static set clickNutAction(value){
+        if(State._clickNutAction == value){
+            return;
+        }
+        //这里的顺序不关键
+        State._clickNutAction = value;
+        MessageCenter.SendMessage(MessageType.TYPE_EFFECT,MessageCmd.CMD_CLICK_NUT_ACTION_CHANGED,value);
+        
+    }
     static set selectedComp(value){
         this._selectedComp = value;
         switch(value){

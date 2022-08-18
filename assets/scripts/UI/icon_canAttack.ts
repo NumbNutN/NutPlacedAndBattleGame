@@ -6,7 +6,7 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const {ccclass, property} = cc._decorator;
-import State,{SelectedComp,Mode} from "../State";
+import State,{SelectedComp,Mode, ClickNutAction} from "../State";
 
 @ccclass
 export default class NewClass extends cc.Component {
@@ -21,7 +21,8 @@ export default class NewClass extends cc.Component {
 
     onLoad () {
         this.node.on(cc.Node.EventType.MOUSE_DOWN,(event)=>{
-            State.clickNutMode = 1; //点击小人后为攻击模式
+            console.debug("点击了攻击模式");
+            State.clickNutAction = ClickNutAction.ATTACK; //点击小人后为攻击模式
             if(State.selectedComp == SelectedComp.NUT_IN_GROUND){
                 if(State.mode == Mode.MOVEMODE){
                     return;

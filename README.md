@@ -32,3 +32,13 @@ move radius 移动半径
 下一个版本：
 卡片合成
 每回合
+
+可拓展：
+
+正常情况下，每回合移动数和场地上nut的个数一致，即每个nut每回合只能移动一步
+扩展的特殊道具可以让一个nut再移动一次
+所以不用Boolean，用number吧
+
+修改计划：将Nut的
+hasMoveInThisRound: boolean改为
+moveRemainder: number
