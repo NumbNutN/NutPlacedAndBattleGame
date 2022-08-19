@@ -40,12 +40,13 @@ export enum MessageCmd{
     CMD_ATTACKCHANCE_CHANGED, //当前攻击机会改变
     CMD_NUT_TO_MOVE,   //人员打开了移动模式
     CMD_SET_NUT_TARGET_LOCATION, //确认人员要前往指定位置
-    CMD_MOVE_OVER, //移动次数用完
-    CMD_ATTACK_OVER, //攻击次数用完
-    CMD_BUILD_OVER, //建造次数用完
-    CMD_MOVE_AVI, //移动次数可用
-    CMD_ATTACK_AVI, //攻击次数可用
-    CMD_BUILD_AVI, //建造次数可用
+    // CMD_MOVE_OVER, //移动次数用完
+    // CMD_ATTACK_OVER, //攻击次数用完
+    // CMD_BUILD_OVER, //建造次数用完
+    // CMD_MOVE_AVI, //移动次数可用
+    // CMD_ATTACK_AVI, //攻击次数可用
+    // CMD_BUILD_AVI, //建造次数可用
+    CMD_UI_VALUE_CHANGE,
     CMD_MOVEING_DONE, //完成移动
     CMD_ROUND_OVER, //本回合结束
     CMD_CLICK_NUT_ACTION_CHANGED //单击小人的逻辑改变

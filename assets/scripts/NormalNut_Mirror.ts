@@ -16,7 +16,7 @@ import State, { Action, ClickNutAction, Owner, SelectedComp } from "./State"
 import { Mode,Process } from "./State";
 
 @ccclass
-export default class NormalNut extends Nut{
+export default class NormalNutMirror extends Nut{
 
     @property(cc.Label)
     label: cc.Label = null;
@@ -47,21 +47,18 @@ export default class NormalNut extends Nut{
     @property(cc.Prefab)
     ringPref: cc.Prefab = null;
 
-    private static _instance :NormalNut = null;
-
-    valueObserver: Array<any> = new Array<any>();
-
-    private owner: Owner = Owner.SELF;
+    private static _instance :NormalNutMirror = null;
 
     private _heal: number = 100;
     private fullHeal: number = 100;
     private _shield: number = 50;
     private fullShield: number = 50;
-    private _actionRandom: number = 10;
-    private _atk: number = 10;
 
-    // hasMoveInThisRound: boolean;
-    // hasAttackInThisRound: boolean;
+
+    valueObserver: Array<any> = new Array<any>();
+
+    private owner: Owner = Owner.SELF;
+
     moveChanceRemainder: number;
     attackChanceRemainder: number;
 
@@ -70,12 +67,6 @@ export default class NormalNut extends Nut{
 
     lastX: number;
     lastY: number;
-
-    ID: number;
-
-    private _moving: boolean;
-
-    moveRadiusCircle: cc.Node;
 
     get heal(){
         return this._heal;
@@ -109,38 +100,17 @@ export default class NormalNut extends Nut{
         }
     }
 
-    // set tarX(value){
-    //     this.tarX = value;
-    //     this.lastX = this.node.x;
-    //     this._moving = true;
-    // }
+    private _moving: boolean;
 
-    // set tarY(value){
-    //     this.tarY = value;
-    //     this.lastY = this.node.y;
-    //     this._moving = true;
-    // }
+    moveRadiusCircle: cc.Node;
 
 
-
-    static Instance(){
-        if(!NormalNut._instance){
-            NormalNut._instance = new NormalNut();
-        }
-        return NormalNut._instance;
-    }
-
-
-
-    // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
         NutManager.Instance.RegisterReceiver(this);
         
         this.moveChanceRemainder =1;
         this.attackChanceRemainder = 1;
-        // this.hasMoveInThisRound = false;
-        // this.hasAttackInThisRound = false;
     }
 
     start () {
@@ -163,30 +133,14 @@ export default class NormalNut extends Nut{
         shieldBarFrame.setParent(this.node);
         shieldBarFrame.setPosition(0,40);
 
-        //生成ID
-        this.ID = State.distributeNewID();
-
-        //告知生成新的镜像nut
 
         // let ring = cc.instantiate(this.ringPref);
         let ring = new cc.Node();
         ring.addComponent(cc.Sprite);
         ring.setParent(this.node);
         ring.setPosition(0,-20);
-        // //根据敌我生成光环
-        // switch(this.owner){
-        //     case Owner.SELF:
-        //         cc.loader.loadRes("blue_ring",cc.SpriteFrame,(err,sp)=>{
-        //             ring.getComponent(cc.Sprite).spriteFrame = sp;
-        //         });
-        //         break;
-        //     case Owner.ENEMY:
-        //         cc.loader.loadRes("red_ring",cc.SpriteFrame,(err,sp)=>{
-        //             ring.getComponent(cc.Sprite).spriteFrame = sp;
-        //         });
-        //         break;
-        // }
-        cc.loader.loadRes("blue_ring",cc.SpriteFrame,(err,sp)=>{
+
+        cc.loader.loadRes("red_ring",cc.SpriteFrame,(err,sp)=>{
             ring.getComponent(cc.Sprite).spriteFrame = sp;
         });
 
@@ -207,63 +161,23 @@ export default class NormalNut extends Nut{
         })
 
         this.node.on(cc.Node.EventType.MOUSE_DOWN,(event)=>{
-            //是否进入操作模式
-            if(State.mode == Mode.OPERATEMODE){
-                State.actionNut = this;
-                switch(State.clickNutAction){
-                    case ClickNutAction.MOVE:
-                        if(!this.moveChanceRemainder){
-                            break;
-                        }
-                        //储存当前的(x,y)坐标
-                        State.lastX = this.node.x;
-                        State.lastY = this.node.y;
-                        this.moveRadiusCircle = cc.instantiate(this.moveRadiusPref);
-                        this.moveRadiusCircle.setParent(this.node);
-                        this.moveRadiusCircle.setPosition(0,0);
-                        //this._moving = true;  局部状态，错误的
-                        //把当前Nut节点寄存到State
-                        //State.actionNut = this;  被信息中心取代
-                        State.selectedComp = SelectedComp.NUT_IN_GROUND;
-                        MessageCenter.SendMessage(MessageType.TYPE_ANY,MessageCmd.CMD_NUT_TO_MOVE,this);
-                        break;
-                    case ClickNutAction.ATTACK:
-                        if(this.attackChanceRemainder){
-                            break;
-                        }
-                        let attackRadius = cc.instantiate(this.attackRadiusPref);
-                        attackRadius.setParent(this.node);
-                        attackRadius.setPosition(0,0);
-                        break;
-
-
-
-                }
+            if(State.distanceBetweenTwoNut(State.actionNut,this)<= State.actionNut.attackRadius){
+                this.heal -= State.actionNut.attack;
             }
         })
+
     }
     update (dt) {
         if(State.action == Process.MOVING && State.actionNut == this){
             if(Math.abs(this.node.x-State.tarX)>3){
-                this.node.x-=(State.lastX-State.tarX)*dt/3;
+                this.node.x-=(this.lastX-State.tarX)*dt/3;
             }
             if(Math.abs(this.node.y-State.tarY)>3){
-                this.node.y-=(State.lastY-State.tarY)*dt/3;
+                this.node.y-=(this.lastY-State.tarY)*dt/3;
             }
             if(Math.abs(this.node.x-State.tarX)<=3&&Math.abs(this.node.y-State.tarY)<=3){
-                // this._moving = false;
-                State.action = Process.DO_NOTHING;
-                //MessageCenter.SendMessage(MessageType.TYPE_ANY,MessageCmd.CMD_MOVEING_DONE,null);
-                // console.debug("发送消息2");
-                // let dic: {[key:string]:any} = {
-                //     sender:this,
-                //     value:-1
-                // }
+
                 this.moveChanceRemainder -=1;
-                MessageCenter.SendMessage(MessageType.TYPE_STATE,MessageCmd.CMD_MOVECHANCE_CHANGED,null);
-                // this.hasMoveInThisRound = true;
-                
-                State.mode = Mode.OPERATEMODE;
             }
         }
 
@@ -277,5 +191,4 @@ export default class NormalNut extends Nut{
         }
         
     }
-
 }

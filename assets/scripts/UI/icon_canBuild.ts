@@ -17,7 +17,7 @@ export default class NewClass extends cc.Component {
     }
 
     ReceiveMessage(msg: Message): void {
-        if(msg.Type == MessageType.TYPE_UI && msg.Command == MessageCmd.CMD_BUILD_OVER){
+        if(msg.Command == MessageCmd.CMD_UI_VALUE_CHANGE){
             this.node.opacity = 60;
         }
     }

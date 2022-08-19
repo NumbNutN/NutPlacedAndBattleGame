@@ -5,10 +5,11 @@
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 import ComponentBase from "./ComponentBase";
-import { Nut} from "./Interface";
+import Nut from "./Nut";
 import ManagerBase from "./ManagerBase";
 import Message, { MessageCmd, MessageType } from "./Message";
 import MessageCenter from "./MessageCenter";
+import NutManager from "./NutManager";
 const {ccclass, property} = cc._decorator;
 
 export enum SelectedComp{
@@ -72,15 +73,24 @@ export default class State extends ManagerBase{
     static canPlaceNut: boolean = true;
 
     static placeRemainder: number = 5;
-    static _moveRemainder: number = 1;
+    static moveRemainder: number;
+    static attackRemainder: number;
 
     private static _mode :Mode = Mode.OPERATEMODE;
 
-    static actionNut: ComponentBase = null;
+    static actionNut: Nut = null;
     static tarX: number;
     static tarY: number;
     static lastX: number;
     static lastY: number;
+
+    static curID: number = 0;
+
+    static distributeNewID():number{
+        return State.curID++;
+    }
+
+    private static temp: number;
 
     static _clickNutAction: ClickNutAction  = ClickNutAction.MOVE;   //0代表移动模式  1代表攻击
 
@@ -169,25 +179,25 @@ export default class State extends ManagerBase{
         }
     }
 
-    static get moveRemainder(){
-        return State._moveRemainder;
-    }
+    // static get moveRemainder(){
+    //     return State._moveRemainder;
+    // }
 
-    static set moveRemainder(value){
-        console.debug("当前的剩余数"+value);
-        if(value == 0){
-            MessageCenter.SendMessage(MessageType.TYPE_UI,MessageCmd.CMD_MOVE_OVER,null);
-            console.debug("发送的管理员为：");
-            console.debug(this);
-            State.canMove = false;
-        }
-        else if(!State._moveRemainder){
-            MessageCenter.SendMessage(MessageType.TYPE_UI,MessageCmd.CMD_MOVE_AVI,null);
-            console.debug("发送的管理员为：");
-            console.debug(this);
-        }
-        State._moveRemainder = value;
-    }
+    // static set moveRemainder(value){
+    //     console.debug("当前的剩余数"+value);
+    //     if(value == 0){
+    //         //MessageCenter.SendMessage(MessageType.TYPE_UI,MessageCmd.CMD_MOVE_OVER,null);
+    //         // console.debug("发送的管理员为：");
+    //         // console.debug(this);
+    //         State.canMove = false;
+    //     }
+    //     else if(!State._moveRemainder){
+    //         //MessageCenter.SendMessage(MessageType.TYPE_UI,MessageCmd.CMD_MOVE_AVI,null);
+    //         // console.debug("发送的管理员为：");
+    //         // console.debug(this);
+    //     }
+    //     State._moveRemainder = value;
+    // }
 
     SetMessageType(): MessageType {
         return MessageType.TYPE_STATE;
@@ -213,15 +223,27 @@ export default class State extends ManagerBase{
                 break;
             case MessageCmd.CMD_MOVECHANCE_CHANGED:
                 //当小人完成行动时
-                console.debug("改变数值发送者为：");
-                console.debug(msg.Content["sender"]);
-                console.debug("剩余数改变,改变后的值为"+(State.moveRemainder+msg.Content["value"]));
-                State.moveRemainder=State.moveRemainder+msg.Content["value"];
+                // console.debug("改变数值发送者为：");
+                // console.debug(msg.Content["sender"]);
+                // console.debug("剩余数改变,改变后的值为"+(State.moveRemainder+msg.Content["value"]));
+                // State.moveRemainder=State.moveRemainder+msg.Content["value"];
+                State.temp = 0;
+                console.debug("state收到移动机会改变");
+                for(let nut of NutManager.Instance.ReceiveList){
+                    State.temp+=nut.moveChanceRemainder;
+                }
+                State.moveRemainder = State.temp;
+                MessageCenter.SendMessage(MessageType.TYPE_UI,MessageCmd.CMD_UI_VALUE_CHANGE,null);
                 break;
             case MessageCmd.CMD_ROUND_OVER:
                 //当一个回合结束后
                 State.mode = Mode.OPERATEMODE;
         }
+    }
+
+    //返回两个nut之间的距离
+    static distanceBetweenTwoNut(nutA: Nut,nutB: Nut):number{
+        return Math.sqrt(Math.pow(nutA.node.x-nutB.node.x,2)+Math.pow(nutA.node.y-nutB.node.y,2));
     }
 
     // LIFE-CYCLE CALLBACKS:

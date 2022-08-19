@@ -13,6 +13,10 @@ export interface Nut{
     heal: number;
     tarX: number;
     tarY: number;
+    moveChanceRemainder: number;
+    attackChanceRemainder: number;
+
+
 }
 
 export interface ValueObsever{

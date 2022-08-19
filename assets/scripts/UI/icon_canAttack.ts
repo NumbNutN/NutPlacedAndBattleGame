@@ -7,6 +7,8 @@
 
 const {ccclass, property} = cc._decorator;
 import State,{SelectedComp,Mode, ClickNutAction} from "../State";
+import Message,{MessageCmd} from "../Message";
+import UIManager from "../UIManager";
 
 @ccclass
 export default class NewClass extends cc.Component {
@@ -20,6 +22,7 @@ export default class NewClass extends cc.Component {
     // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
+        UIManager.Instance.RegisterReceiver(this);
         this.node.on(cc.Node.EventType.MOUSE_DOWN,(event)=>{
             console.debug("点击了攻击模式");
             State.clickNutAction = ClickNutAction.ATTACK; //点击小人后为攻击模式
@@ -34,6 +37,19 @@ export default class NewClass extends cc.Component {
 
     start () {
 
+    }
+
+    ReceiveMessage(msg: Message): void {
+
+        if(msg.Command == MessageCmd.CMD_UI_VALUE_CHANGE){
+            if(State.attackRemainder){
+                this.node.opacity = 255;
+            }
+            else{
+                this.node.opacity = 60;
+            }
+        
+        }
     }
 
     // update (dt) {}

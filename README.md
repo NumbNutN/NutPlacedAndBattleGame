@@ -26,12 +26,23 @@ move radius 移动半径
 可以花费金币建造桥梁
 可以花费金币建造城墙
 
+
+
 桥梁
 
 
 下一个版本：
 卡片合成
 每回合
+
+
+
+
+
+
+
+
+
 
 可拓展：
 
@@ -42,3 +53,22 @@ move radius 移动半径
 修改计划：将Nut的
 hasMoveInThisRound: boolean改为
 moveRemainder: number
+
+每个nut的剩余移动数由State存储转为各个对象自行存储
+原来的信息
+MessageCenter.SendMessage(MessageType.TYPE_ANY,MessageCmd.CMD_MOVECHANCE_CHANGED,dic);
+
+MessageCenter.SendMessage(MessageType.TYPE_ANY,MessageCmd.CMD_MOVECHANCE_CHANGED,null);
+由State把所有对象的moveRemainder加起来即可
+
+State想把所有NormalNut对象的MoveRemainder累加起来并不容易，因为cc.Node对象并没有moveRemainder属性，想这样处理需要用到接口
+
+
+event.stopPropagation();可以阻止重叠对象点击多次生效，首次用在wall的preview上
+
+
+static actionNut: ComponentBase = null;
+
+NutManager.ts
+ReceiveList: any[] = [];
+为了兼容ManagerBase基类

@@ -7,6 +7,7 @@
 
 import ManagerBase from "./ManagerBase";
 import Message, { MessageType } from "./Message";
+import Nut from "./Nut";
 
 const {ccclass, property} = cc._decorator;
 
@@ -26,10 +27,9 @@ export default class NutManager extends ManagerBase {
 
     static Instance: ManagerBase;
 
+    ReceiveList: Nut[] = [];
+    // NutList: Nut[] = [];
 
-
-
-    // LIFE-CYCLE CALLBACKS:
 
     SetMessageType(): MessageType {
         return MessageType.TYPE_NUT;

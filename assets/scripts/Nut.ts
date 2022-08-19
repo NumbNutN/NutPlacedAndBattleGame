@@ -1,3 +1,5 @@
+import ComponentBase from "./ComponentBase";
+
 enum NutType{
     NormalNut,
     Shooter,
@@ -6,42 +8,53 @@ enum NutType{
     King
 }
 
+const {ccclass, property} = cc._decorator;
 
-class Nut{
+@ccclass
+export default class Nut extends ComponentBase {
+    //  private _heal: number;
+    //  _actionRandom: number;
+    //  _atk: number;
 
-    protected _heal: number;
-    protected _actionRandom: number;
-    protected _atk: number;
+    moveChanceRemainder: number;
+    attackChanceRemainder: number;
 
-    get heal(){
-        return this._heal;
-    }
+    attackRadius: number;
+    moveRadiusCircle: number;
 
-    set heal(value){
-        this._heal = value;
-    }
 
-    static Create(nutType: NutType){
-        let nut: Nut;
-        switch(nutType){
-            case NutType.NormalNut:
-                nut = new NormalNut();
-        }
-    }
+
+    // get heal(){
+    //     return this._heal;
+    // }
+
+    // set heal(value){
+    //     this._heal = value;
+    // }
+
+    // static Create(nutType: NutType){
+    //     let nut: Nut;
+    //     switch(nutType){
+    //         case NutType.NormalNut:
+    //             nut = new NormalNut();
+    //     }
+    // }
+
 }
 
-class NormalNut extends Nut{
+
+// class NormalNut extends Nut{
     
-    constructor(){
-        super();
-        this._heal = 50;
+//     constructor(){
+//         super();
+//         this._heal = 50;
 
-    }
-}
+//     }
+// }
 
-class Builder extends Nut{
-    constructor(){
-        super();
-        this._heal = 100;
-    }
-}
+// class Builder extends Nut{
+//     constructor(){
+//         super();
+//         this._heal = 100;
+//     }
+// }

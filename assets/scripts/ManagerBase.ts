@@ -15,7 +15,7 @@ const {ccclass, property} = cc._decorator;
 export default class ManagerBase extends ComponentBase {
 
 
-    ReceiveList: ComponentBase[] = [];
+    ReceiveList: any[] = [];
     //当前管理类接收的消息类型(enum MessageType)
     messageType: MessageType;
 

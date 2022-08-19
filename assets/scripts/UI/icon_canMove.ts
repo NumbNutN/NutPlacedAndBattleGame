@@ -19,6 +19,7 @@ export default class Icon_canMove extends ComponentBase{
         UIManager.Instance.RegisterReceiver(this);
 
         this.node.on(cc.Node.EventType.MOUSE_DOWN,(event)=>{
+            
             State.clickNutAction = ClickNutAction.MOVE; // 点击小人后为移动模式
             if(State.selectedComp == SelectedComp.NUT_IN_GROUND){
                 if(State.mode == Mode.MOVEMODE){
@@ -30,16 +31,22 @@ export default class Icon_canMove extends ComponentBase{
     }       
 
     ReceiveMessage(msg: Message): void {
-        switch(msg.Command){
-            case MessageCmd.CMD_MOVE_OVER:
-                this.node.opacity = 60;
-                break;
-            case MessageCmd.CMD_MOVE_AVI:
+        // switch(msg.Command){
+        //     case MessageCmd.CMD_MOVE_OVER:
+        //         this.node.opacity = 60;
+        //         break;
+        //     case MessageCmd.CMD_MOVE_AVI:
+        //         this.node.opacity = 255;
+        //         break;
+        // }
+        if(msg.Command == MessageCmd.CMD_UI_VALUE_CHANGE){
+            if(State.moveRemainder){
                 this.node.opacity = 255;
-                break;
-        }
+            }
+            else{
+                this.node.opacity = 60;
+            }
         
+        }
     }
-
-
 }
