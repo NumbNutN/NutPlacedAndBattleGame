@@ -13,6 +13,9 @@ const {ccclass, property} = cc._decorator;
 
 @ccclass
 export default class ManagerBase extends ComponentBase {
+    /*
+    这是所有管理者的基类
+    */
 
 
     ReceiveList: any[] = [];
@@ -37,6 +40,10 @@ export default class ManagerBase extends ComponentBase {
     //注册消息监听
     RegisterReceiver(cb: ComponentBase){
         this.ReceiveList.push(cb);
+    }
+
+    WithDrawReceiver(cb: ComponentBase){
+        this.ReceiveList.splice(this.ReceiveList.indexOf(cb),1);
     }
 
     //接收消息并向下分发

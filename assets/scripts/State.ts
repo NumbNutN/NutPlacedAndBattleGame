@@ -86,6 +86,10 @@ export default class State extends ManagerBase{
 
     static curID: number = 0;
 
+    //2022-8-22
+    //State管理类的实例
+    static Instance: State;
+
     static distributeNewID():number{
         return State.curID++;
     }
@@ -96,8 +100,11 @@ export default class State extends ManagerBase{
 
     onLoad(){
         super.onLoad();
+        State.Instance = this;
+
 
     }
+
 
     static get clickNutAction(){
         return this._clickNutAction;
@@ -222,23 +229,54 @@ export default class State extends ManagerBase{
                 console.debug("已存储目标坐标 x:"+State.tarX+" y: "+State.tarY);
                 break;
             case MessageCmd.CMD_MOVECHANCE_CHANGED:
-                //当小人完成行动时
-                // console.debug("改变数值发送者为：");
-                // console.debug(msg.Content["sender"]);
-                // console.debug("剩余数改变,改变后的值为"+(State.moveRemainder+msg.Content["value"]));
-                // State.moveRemainder=State.moveRemainder+msg.Content["value"];
-                State.temp = 0;
-                console.debug("state收到移动机会改变");
-                for(let nut of NutManager.Instance.ReceiveList){
-                    State.temp+=nut.moveChanceRemainder;
-                }
-                State.moveRemainder = State.temp;
-                MessageCenter.SendMessage(MessageType.TYPE_UI,MessageCmd.CMD_UI_VALUE_CHANGE,null);
+                // //当小人完成行动时
+                // // console.debug("改变数值发送者为：");
+                // // console.debug(msg.Content["sender"]);
+                // // console.debug("剩余数改变,改变后的值为"+(State.moveRemainder+msg.Content["value"]));
+                // // State.moveRemainder=State.moveRemainder+msg.Content["value"];
+                // State.temp = 0;
+                // console.debug("state收到移动机会改变");
+                // for(let nut of NutManager.Instance.ReceiveList){
+                //     State.temp+=nut.moveChanceRemainder;
+                // }
+                // State.moveRemainder = State.temp;
+                // MessageCenter.SendMessage(MessageType.TYPE_UI,MessageCmd.CMD_UI_VALUE_CHANGE,null);
+                this.updateMoveRemainder();
                 break;
             case MessageCmd.CMD_ROUND_OVER:
                 //当一个回合结束后
                 State.mode = Mode.OPERATEMODE;
+            //2022-8-22
+            case MessageCmd.CMD_ATTACKCHANCE_CHANGED:
+                // State.temp = 0;
+                // for(let nut of NutManager.Instance.ReceiveList){
+                //     State.temp+=nut.attackChanceRemainder;
+                // }
+                // State.attackRemainder = State.temp;
+                // MessageCenter.SendMessage(MessageType.TYPE_UI,MessageCmd.CMD_UI_VALUE_CHANGE,null);
+                this.updateAttackRemainder();
+
         }
+    }
+
+    //2022-8-22
+    updateMoveRemainder(){
+        State.temp = 0;
+        for(let nut of NutManager.Instance.ReceiveList){
+            State.temp+=nut.moveChanceRemainder;
+        }
+        State.moveRemainder = State.temp;
+        MessageCenter.SendMessage(MessageType.TYPE_UI,MessageCmd.CMD_UI_VALUE_CHANGE,null);
+
+    }
+
+    updateAttackRemainder(){
+        State.temp = 0;
+        for(let nut of NutManager.Instance.ReceiveList){
+            State.temp+=nut.attackChanceRemainder;
+        }
+        State.attackRemainder = State.temp;
+        MessageCenter.SendMessage(MessageType.TYPE_UI,MessageCmd.CMD_UI_VALUE_CHANGE,null);
     }
 
     //返回两个nut之间的距离
@@ -252,6 +290,13 @@ export default class State extends ManagerBase{
 
 
     start () {
+        //2022-8-22
+        //初始化的时候就把数值设置好
+        this.updateMoveRemainder();
+        this.updateAttackRemainder();
+        //设置好当前的模式
+        State.mode = Mode.OPERATEMODE;
+        State.action = Process.DO_NOTHING;
         
     }
 

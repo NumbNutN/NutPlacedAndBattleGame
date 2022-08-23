@@ -5,9 +5,6 @@
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
-import Message,{MessageCmd} from "../Message";
-import State from "../State";
-import UIManager from "../UIManager";
 const {ccclass, property} = cc._decorator;
 
 @ccclass
@@ -19,22 +16,18 @@ export default class NewClass extends cc.Component {
     @property
     text: string = 'hello';
 
+    // @property(cc.Prefab)
+    // iconPref: cc.Prefab = null;
+
     // LIFE-CYCLE CALLBACKS:
 
-    //2022-8-22
-    protected onLoad(): void {
-        UIManager.Instance.RegisterReceiver(this);
-    }
-
+    // onLoad () {}
 
     start () {
+        this.node.on(cc.Node.EventType.MOUSE_MOVE,(event)=>{
+            this.node.setPosition(event.getLocation());
+        })
 
-    }
-
-    ReceiveMessage(msg: Message): void {
-        if(msg.Command == MessageCmd.CMD_UI_VALUE_CHANGE){
-            this.node.getComponent(cc.Label).string = (State.attackRemainder as unknown) as string;
-        }
     }
 
     // update (dt) {}

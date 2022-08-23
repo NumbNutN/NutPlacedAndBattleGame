@@ -45,6 +45,7 @@ export default class NormalNut extends Nut{
     attackRadiusPref: cc.Prefab = null;
 
     @property(cc.Prefab)
+    
     ringPref: cc.Prefab = null;
 
     private static _instance :NormalNut = null;
@@ -57,13 +58,20 @@ export default class NormalNut extends Nut{
     private fullHeal: number = 100;
     private _shield: number = 50;
     private fullShield: number = 50;
-    private _actionRandom: number = 10;
-    private _atk: number = 10;
+    private _actionRandom: number = 100;
+    atk: number = 10;
 
     // hasMoveInThisRound: boolean;
     // hasAttackInThisRound: boolean;
     moveChanceRemainder: number;
     attackChanceRemainder: number;
+
+    attackRadius: number = 100;
+
+    //2022_8_19
+    healBar: cc.Node;
+    shieldBar: cc.Node;
+
 
     tarX: number;
     tarY: number;
@@ -71,26 +79,34 @@ export default class NormalNut extends Nut{
     lastX: number;
     lastY: number;
 
+    ani: any;
+
     ID: number;
 
     private _moving: boolean;
 
     moveRadiusCircle: cc.Node;
+    ring: cc.Node;
 
     get heal(){
         return this._heal;
     }
 
+    //2022_8_10 血条的消息推送
     set heal(value){
-        if(value>0){
-            this._heal = value;
+        this.healBar.getComponent(cc.Sprite).fillRange = value/this.fullHeal;
+        if(value>this.fullHeal){
+            this._heal = this.fullHeal;
+        }
+        else if(value<=0){
+            this._heal = 0;
+            //注销该实例
+            NutManager.Instance.WithDrawReceiver(this);
+            this.node.destroy();
         }
         else{
-            this._heal = 0;
-        }
-        for(let observer of this.valueObserver){
-            observer.ValueChanged(this._heal/this.fullHeal);
-        }
+            this._heal = value;
+        }        
     }
 
     get shield(){
@@ -98,15 +114,19 @@ export default class NormalNut extends Nut{
     }
 
     set shield(value){
-        if(value>0){
-            this._shield = value;
+        this.shieldBar.getComponent(cc.Sprite).fillRange = value/this.fullShield;
+        if(value>this.fullShield){
+            this._heal = this.fullShield;
         }
-        else{
+        else if(value<=0){
             this._shield = 0;
         }
-        for(let observer of this.valueObserver){
-            observer.ValueChanged(this._shield/this.fullShield);
-        }
+        else{
+            this._shield = value;
+        }        
+        // for(let observer of this.valueObserver){
+        //     observer.ValueChanged(this._shield/this.fullShield);
+        // }
     }
 
     // set tarX(value){
@@ -130,6 +150,16 @@ export default class NormalNut extends Nut{
         return NormalNut._instance;
     }
 
+    moving(){
+        this.ani = this.getComponent(cc.Animation);
+        //播放动画
+        this.ani.play("walking_normal_nut");
+    }
+
+    stop(){
+        this.ani.stop();
+    }
+
 
 
     // LIFE-CYCLE CALLBACKS:
@@ -144,16 +174,18 @@ export default class NormalNut extends Nut{
     }
 
     start () {
+        //this.node.setSiblingIndex(100);
+        this.node.zIndex = 1;
         //生成血条和盾
-        let healBar = cc.instantiate(this.healBarPref);
-        healBar.setParent(this.node);
-        healBar.setPosition(0,30);
-        this.valueObserver.push(healBar);
+        this.healBar = cc.instantiate(this.healBarPref);
+        this.healBar.setParent(this.node);
+        this.healBar.setPosition(0,30);
+        //this.valueObserver.push(this.healBar);
 
-        let shieldBar = cc.instantiate(this.shieldBarPref);
-        shieldBar.setParent(this.node);
-        shieldBar.setPosition(0,40);
-        this.valueObserver.push(shieldBar);
+        this.shieldBar = cc.instantiate(this.shieldBarPref);
+        this.shieldBar.setParent(this.node);
+        this.shieldBar.setPosition(0,40);
+        //this.valueObserver.push(shieldBar);
 
         let healBarFrame = cc.instantiate(this.barPref);
         healBarFrame.setParent(this.node);
@@ -166,13 +198,19 @@ export default class NormalNut extends Nut{
         //生成ID
         this.ID = State.distributeNewID();
 
+        //2022-8-22
+        //每次生成新的小人时重新计算全局移动和攻击机会
+        State.Instance.updateMoveRemainder();
+        State.Instance.updateAttackRemainder();
+        
+
         //告知生成新的镜像nut
 
         // let ring = cc.instantiate(this.ringPref);
-        let ring = new cc.Node();
-        ring.addComponent(cc.Sprite);
-        ring.setParent(this.node);
-        ring.setPosition(0,-20);
+        // let ring = new cc.Node();
+        // ring.addComponent(cc.Sprite);
+
+
         // //根据敌我生成光环
         // switch(this.owner){
         //     case Owner.SELF:
@@ -186,9 +224,12 @@ export default class NormalNut extends Nut{
         //         });
         //         break;
         // }
-        cc.loader.loadRes("blue_ring",cc.SpriteFrame,(err,sp)=>{
-            ring.getComponent(cc.Sprite).spriteFrame = sp;
-        });
+        // cc.loader.loadRes("blue_ring",cc.SpriteFrame,(err,sp)=>{
+        //     ring.getComponent(cc.Sprite).spriteFrame = sp;
+        // });
+        this.ring = cc.instantiate(this.ringPref);
+        this.ring.setParent(this.node);
+        this.ring.setPosition(0,-20);
 
 
         this.node.on(cc.Node.EventType.MOUSE_ENTER,(event)=>{
@@ -219,8 +260,8 @@ export default class NormalNut extends Nut{
                         State.lastX = this.node.x;
                         State.lastY = this.node.y;
                         this.moveRadiusCircle = cc.instantiate(this.moveRadiusPref);
-                        this.moveRadiusCircle.setParent(this.node);
-                        this.moveRadiusCircle.setPosition(0,0);
+                        this.moveRadiusCircle.setParent(cc.director.getScene());
+                        this.moveRadiusCircle.setPosition(this.node.position);
                         //this._moving = true;  局部状态，错误的
                         //把当前Nut节点寄存到State
                         //State.actionNut = this;  被信息中心取代
@@ -228,12 +269,15 @@ export default class NormalNut extends Nut{
                         MessageCenter.SendMessage(MessageType.TYPE_ANY,MessageCmd.CMD_NUT_TO_MOVE,this);
                         break;
                     case ClickNutAction.ATTACK:
-                        if(this.attackChanceRemainder){
+                        if(!this.attackChanceRemainder){
                             break;
                         }
                         let attackRadius = cc.instantiate(this.attackRadiusPref);
-                        attackRadius.setParent(this.node);
-                        attackRadius.setPosition(0,0);
+                        // attackRadius.setParent(this.node);
+                        // attackRadius.setPosition(0,0);
+                        attackRadius.setParent(cc.director.getScene());
+                        attackRadius.setPosition(this.node.position);
+
                         break;
 
 
@@ -264,6 +308,8 @@ export default class NormalNut extends Nut{
                 // this.hasMoveInThisRound = true;
                 
                 State.mode = Mode.OPERATEMODE;
+                this.stop();
+                
             }
         }
 

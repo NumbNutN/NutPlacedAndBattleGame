@@ -16,11 +16,26 @@ export default class Nut extends ComponentBase {
     //  _actionRandom: number;
     //  _atk: number;
 
+    //一回合移动机会
     moveChanceRemainder: number;
+    //一回合攻击机会
     attackChanceRemainder: number;
 
+    //攻击半径
     attackRadius: number;
-    moveRadiusCircle: number;
+    //移动半径
+    moveRadius: number;
+
+    //攻击力
+    atk: number;
+
+    mirrorNut: ComponentBase;
+
+    moving(){
+
+    }
+
+
 
 
 

@@ -51,8 +51,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        435,
-        390,
+        384.933,
+        495.14,
         0,
         0,
         0,
@@ -103,7 +103,7 @@
       "y": 0
     },
     "_fillStart": 0,
-    "_fillRange": 0.8,
+    "_fillRange": 1,
     "_isTrimmedMode": true,
     "_atlas": null,
     "_id": ""

@@ -9,6 +9,15 @@ const {ccclass, property} = cc._decorator;
 
 @ccclass
 export default class Message{
+    /*
+    这是程序组件相互通信传递的信息体的标准格式
+    Type: 决定信息将由信息中心递送给哪一个管理者
+    Command: 描述了信息的具体任务
+    Content: 补充了一些细节，一般特定的Command决定了你的Content遵从什么格式
+
+    2022-08-15 创建该内容
+    2022-08-20 注释补充
+    */
     Type: MessageType;
     Command: MessageCmd;
     Content: any;

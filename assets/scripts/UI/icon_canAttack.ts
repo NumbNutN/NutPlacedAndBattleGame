@@ -27,10 +27,10 @@ export default class NewClass extends cc.Component {
             console.debug("点击了攻击模式");
             State.clickNutAction = ClickNutAction.ATTACK; //点击小人后为攻击模式
             if(State.selectedComp == SelectedComp.NUT_IN_GROUND){
-                if(State.mode == Mode.MOVEMODE){
+                if(State.mode == Mode.ATTACKMODE){
                     return;
                 }
-                State.mode = Mode.MOVEMODE;
+                State.mode = Mode.ATTACKMODE;
             }
         })
     }

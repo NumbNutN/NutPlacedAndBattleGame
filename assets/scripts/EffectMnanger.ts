@@ -58,8 +58,10 @@ export default class EffectManager extends ManagerBase {
                     break;
             }
             if(newRadius){
-                newRadius.setParent(State.actionNut.node);
-                newRadius.setPosition(0,0);
+                // newRadius.setParent(State.actionNut.node);
+                // newRadius.setPosition(0,0);
+                newRadius.setParent(cc.director.getScene());
+                newRadius.setPosition(State.actionNut.node.position);
             }
             
         }

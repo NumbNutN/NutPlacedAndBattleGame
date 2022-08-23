@@ -38,11 +38,6 @@ export default class NormalNutMirror extends Nut{
     @property(cc.Prefab)
     shieldBarPref: cc.Prefab = null;
 
-    @property(cc.Prefab)
-    moveRadiusPref: cc.Prefab = null;
-
-    @property(cc.Prefab)
-    attackRadiusPref: cc.Prefab = null;
 
     @property(cc.Prefab)
     ringPref: cc.Prefab = null;
@@ -68,20 +63,33 @@ export default class NormalNutMirror extends Nut{
     lastX: number;
     lastY: number;
 
+    healBar: cc.Node;
+    shieldBar: cc.Node;
+
+    @property(cc.Prefab)
+    attackSuspendedIconPref: cc.Prefab;
+
+    attackSuspendedIcon: cc.Node;
+
     get heal(){
         return this._heal;
     }
 
+    //2022_8_10 血条的消息推送
     set heal(value){
-        if(value>0){
-            this._heal = value;
+        this.healBar.getComponent(cc.Sprite).fillRange = value/this.fullHeal;
+        if(value>this.fullHeal){
+            this._heal = this.fullHeal;
+        }
+        else if(value<=0){
+            this._heal = 0;
+            //注销该实例
+            NutManager.Instance.WithDrawReceiver(this);
+            this.node.destroy();
         }
         else{
-            this._heal = 0;
-        }
-        for(let observer of this.valueObserver){
-            observer.ValueChanged(this._heal/this.fullHeal);
-        }
+            this._heal = value;
+        }        
     }
 
     get shield(){
@@ -89,15 +97,16 @@ export default class NormalNutMirror extends Nut{
     }
 
     set shield(value){
-        if(value>0){
-            this._shield = value;
+        this.shieldBar.getComponent(cc.Sprite).fillRange = value/this.fullShield;
+        if(value>this.fullShield){
+            this._heal = this.fullShield;
         }
-        else{
+        else if(value<=0){
             this._shield = 0;
         }
-        for(let observer of this.valueObserver){
-            observer.ValueChanged(this._shield/this.fullShield);
-        }
+        else{
+            this._shield = value;
+        }        
     }
 
     private _moving: boolean;
@@ -114,16 +123,18 @@ export default class NormalNutMirror extends Nut{
     }
 
     start () {
+        this.node.zIndex = 1;
+        //this.node.setSiblingIndex(100);
         //生成血条和盾
-        let healBar = cc.instantiate(this.healBarPref);
-        healBar.setParent(this.node);
-        healBar.setPosition(0,30);
-        this.valueObserver.push(healBar);
+        this.healBar = cc.instantiate(this.healBarPref);
+        this.healBar.setParent(this.node);
+        this.healBar.setPosition(0,30);
+        // this.valueObserver.push(healBar);
 
-        let shieldBar = cc.instantiate(this.shieldBarPref);
-        shieldBar.setParent(this.node);
-        shieldBar.setPosition(0,40);
-        this.valueObserver.push(shieldBar);
+        this.shieldBar = cc.instantiate(this.shieldBarPref);
+        this.shieldBar.setParent(this.node);
+        this.shieldBar.setPosition(0,40);
+        // this.valueObserver.push(shieldBar);
 
         let healBarFrame = cc.instantiate(this.barPref);
         healBarFrame.setParent(this.node);
@@ -134,15 +145,9 @@ export default class NormalNutMirror extends Nut{
         shieldBarFrame.setPosition(0,40);
 
 
-        // let ring = cc.instantiate(this.ringPref);
-        let ring = new cc.Node();
-        ring.addComponent(cc.Sprite);
+        let ring = cc.instantiate(this.ringPref);
         ring.setParent(this.node);
         ring.setPosition(0,-20);
-
-        cc.loader.loadRes("red_ring",cc.SpriteFrame,(err,sp)=>{
-            ring.getComponent(cc.Sprite).spriteFrame = sp;
-        });
 
 
         this.node.on(cc.Node.EventType.MOUSE_ENTER,(event)=>{
@@ -150,19 +155,43 @@ export default class NormalNutMirror extends Nut{
                 this._cursorAimedFrame = cc.instantiate(this.cursorAimedFramePref);
                 this._cursorAimedFrame.setParent(this.node);
                 this._cursorAimedFrame.setPosition(0,0);
-            } 
+            }
+            if(State.mode == Mode.ATTACKMODE){
+                if(State.distanceBetweenTwoNut(State.actionNut,this)<= State.actionNut.attackRadius && !this.attackSuspendedIcon){
+                    console.debug("侦测到敌人");
+                    this.attackSuspendedIcon = cc.instantiate(this.attackSuspendedIconPref);
+                    this.attackSuspendedIcon.setParent(cc.director.getScene());
+                    this.attackSuspendedIcon.setPosition(event.getLocation());
+
+                }
+            }
+
+            
         })
 
         this.node.on(cc.Node.EventType.MOUSE_LEAVE,(event)=>{
+            console.debug("离开敌人");
             if(this._cursorAimedFrame){
                 this._cursorAimedFrame.destroy();
                 this._cursorAimedFrame = null;
             }
+            if(this.attackSuspendedIcon){
+                this.attackSuspendedIcon.destroy();
+                this.attackSuspendedIcon = null;
+            }
         })
 
         this.node.on(cc.Node.EventType.MOUSE_DOWN,(event)=>{
-            if(State.distanceBetweenTwoNut(State.actionNut,this)<= State.actionNut.attackRadius){
-                this.heal -= State.actionNut.attack;
+            //对当前攻击方的剩余攻击数二次判断
+            //第一次在攻击范围圈的生成
+            if(State.distanceBetweenTwoNut(State.actionNut,this)<= State.actionNut.attackRadius && State.actionNut.attackChanceRemainder){
+                console.debug("对敌人造成伤害");
+                this.heal -= State.actionNut.atk;
+                //2022-8-22
+                //攻击方攻击机会-1
+                State.actionNut.attackChanceRemainder-=1;
+                MessageCenter.SendMessage(MessageType.TYPE_STATE,MessageCmd.CMD_ATTACKCHANCE_CHANGED,null);
+
             }
         })
 

@@ -53,9 +53,10 @@ export default class NewClass extends ComponentBase {
                 // State.tarY = event.getLocation().y;
                 // NormalNut.Instance().tarX = event.getX;
                 // NormalNut.Instance().tarY = event.getY;
-                EffectManager.Instance.ReceiveList.splice(EffectManager.Instance.ReceiveList.indexOf(this),1);
+                EffectManager.Instance.WithDrawReceiver(this);
                 this.node.destroy();
                 State.action = Process.MOVING;
+                State.actionNut.moving();
                 console.debug(State.actionNut);
             }
             

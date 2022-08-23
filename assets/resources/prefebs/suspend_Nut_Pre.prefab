@@ -13,7 +13,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "suspendNutPre",
+    "_name": "suspend_Nut_Pre",
     "_objFlags": 0,
     "_parent": null,
     "_children": [],
@@ -51,8 +51,8 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        719.175,
-        414.616,
+        812,
+        316,
         0,
         0,
         0,
@@ -92,7 +92,7 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "9e6f59a8-9156-40f7-96e4-d3d040955a78"
+      "__uuid__": "c43b01a6-0be4-4743-adcc-d15e74d22408"
     },
     "_type": 0,
     "_sizeMode": 0,
@@ -105,7 +105,9 @@
     "_fillStart": 0,
     "_fillRange": 0,
     "_isTrimmedMode": true,
-    "_atlas": null,
+    "_atlas": {
+      "__uuid__": "70f01a1a-6b8e-4ab7-83e8-e37df416832d"
+    },
     "_id": ""
   },
   {

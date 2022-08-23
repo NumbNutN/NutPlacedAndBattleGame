@@ -36,12 +36,14 @@ export default class NewClass extends ComponentBase {
         this.node.on(cc.Node.EventType.MOUSE_LEAVE,(event)=>{
             State.canAttack = false;
         })
-    }
 
+    }
+    
     ReceiveMessage(msg: Message): void {
         if(msg.Command == MessageCmd.CMD_CLICK_NUT_ACTION_CHANGED){
             if(msg.Content != ClickNutAction.ATTACK){
-                EffectManager.Instance.ReceiveList.splice(EffectManager.Instance.ReceiveList.indexOf(this),1);
+                EffectManager.Instance.WithDrawReceiver(this);
+                // EffectManager.Instance.ReceiveList.splice(EffectManager.Instance.ReceiveList.indexOf(this),1);
                 this.node.destroy();
             }
         }

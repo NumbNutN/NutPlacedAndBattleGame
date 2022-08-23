@@ -13,7 +13,7 @@
   },
   {
     "__type__": "cc.Node",
-    "_name": "healPre",
+    "_name": "attack",
     "_objFlags": 0,
     "_parent": null,
     "_children": [],
@@ -21,13 +21,10 @@
     "_components": [
       {
         "__id__": 2
-      },
-      {
-        "__id__": 3
       }
     ],
     "_prefab": {
-      "__id__": 4
+      "__id__": 3
     },
     "_opacity": 255,
     "_color": {
@@ -39,8 +36,8 @@
     },
     "_contentSize": {
       "__type__": "cc.Size",
-      "width": 50,
-      "height": 10
+      "width": 114,
+      "height": 80
     },
     "_anchorPoint": {
       "__type__": "cc.Vec2",
@@ -51,16 +48,16 @@
       "__type__": "TypedArray",
       "ctor": "Float64Array",
       "array": [
-        589,
-        455,
+        716,
+        187,
         0,
         0,
         0,
         0,
         1,
-        1,
-        1,
-        1
+        0.264,
+        0.264,
+        0.264
       ]
     },
     "_eulerAngles": {
@@ -92,9 +89,9 @@
     "_srcBlendFactor": 770,
     "_dstBlendFactor": 771,
     "_spriteFrame": {
-      "__uuid__": "0ab6fe4f-b964-44dd-b338-edfa3ff13df1"
+      "__uuid__": "9c319a10-7f11-4e20-b4a9-b51fdc5fba4d"
     },
-    "_type": 3,
+    "_type": 0,
     "_sizeMode": 1,
     "_fillType": 0,
     "_fillCenter": {
@@ -103,21 +100,9 @@
       "y": 0
     },
     "_fillStart": 0,
-    "_fillRange": 1,
+    "_fillRange": 0,
     "_isTrimmedMode": true,
     "_atlas": null,
-    "_id": ""
-  },
-  {
-    "__type__": "579171qam5EaIhif4yE/0pg",
-    "_name": "",
-    "_objFlags": 0,
-    "node": {
-      "__id__": 1
-    },
-    "_enabled": true,
-    "label": null,
-    "text": "hello",
     "_id": ""
   },
   {

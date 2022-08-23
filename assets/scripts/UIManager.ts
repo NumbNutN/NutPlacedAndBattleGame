@@ -12,6 +12,11 @@ const {ccclass, property} = cc._decorator;
 
 @ccclass
 export default class UIManager extends ManagerBase {
+    /*
+    这个管理类管理所有的UI控件
+    当信息分发给它的管理控件时，
+    Message信息体的Type属性应为TYPE_UI
+    */
 
     static Instance: UIManager;
     
