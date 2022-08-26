@@ -47,8 +47,8 @@ export enum MessageCmd{
     CMD_MOVECHANCE_CHANGED,  //当前移动机会改变
     CMD_BUILDCHANCE_CHANGED,  //当前行动机会改变
     CMD_ATTACKCHANCE_CHANGED, //当前攻击机会改变
-    CMD_NUT_TO_MOVE,   //人员打开了移动模式
-    CMD_SET_NUT_TARGET_LOCATION, //确认人员要前往指定位置
+    // CMD_NUT_TO_MOVE,   //人员打开了移动模式
+    // CMD_SET_NUT_TARGET_LOCATION, //确认人员要前往指定位置 2022-8-24 由于新的移动方案，这个给State发送tarX，Y的方式已经弃用
     // CMD_MOVE_OVER, //移动次数用完
     // CMD_ATTACK_OVER, //攻击次数用完
     // CMD_BUILD_OVER, //建造次数用完
@@ -58,7 +58,12 @@ export enum MessageCmd{
     CMD_UI_VALUE_CHANGE,
     CMD_MOVEING_DONE, //完成移动
     CMD_ROUND_OVER, //本回合结束
-    CMD_CLICK_NUT_ACTION_CHANGED //单击小人的逻辑改变
+    CMD_CLICK_NUT_ACTION_CHANGED, //单击小人的逻辑改变
+    //2022-8-24
+    CMD_GAME_OVER,
+    //2-22-8-24
+    CMD_EFFECT_CHANGE
+
 
 }
 

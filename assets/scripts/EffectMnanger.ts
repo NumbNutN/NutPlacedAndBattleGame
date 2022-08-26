@@ -7,6 +7,7 @@
 
 import ManagerBase from "./ManagerBase";
 import Message, { MessageCmd, MessageType } from "./Message";
+import MessageCenter from "./MessageCenter";
 import State, { ClickNutAction } from "./State";
 
 const {ccclass, property} = cc._decorator;
@@ -57,13 +58,19 @@ export default class EffectManager extends ManagerBase {
                     newRadius = cc.instantiate(this.attackRadiusPref);
                     break;
             }
+            //2022-8-24
+            //在生成新的范围圈之前销毁所有的圈
+            MessageCenter.SendMessage(MessageType.TYPE_EFFECT,MessageCmd.CMD_EFFECT_CHANGE,newRadius)
             if(newRadius){
-                // newRadius.setParent(State.actionNut.node);
-                // newRadius.setPosition(0,0);
                 newRadius.setParent(cc.director.getScene());
                 newRadius.setPosition(State.actionNut.node.position);
             }
             
+        }
+        else if(msg.Command == MessageCmd.CMD_EFFECT_CHANGE){
+            for(let cb of EffectManager.Instance.ReceiveList){
+                cb.ReceiveMessage(msg);
+            }
         }
 
 

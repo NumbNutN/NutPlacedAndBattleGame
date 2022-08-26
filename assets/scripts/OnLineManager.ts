@@ -11,6 +11,7 @@ import Nut from "./Nut";
 
 const {ccclass, property} = cc._decorator;
 
+
 class MsgNutPos{
     nutID: number;
     tarPos: number[];
@@ -35,7 +36,7 @@ class MsgNutValue{
 }
 
 @ccclass
-export default class NewClass extends ManagerBase {
+export default class OnLineManager extends ManagerBase {
 
     @property(cc.Label)
     label: cc.Label = null;
@@ -43,36 +44,88 @@ export default class NewClass extends ManagerBase {
     @property
     text: string = 'hello';
 
-    static mirrorNutList: any[] = [];
-    static mirrorWallList: any[] = [];
+    @property(cc.Prefab)
+    normal_nut_pref: cc.Prefab = null;
+
+    mirrorNutList: any[] = [];
+    mirrorWallList: any[] = [];
+
+    static matchID: number;
+
+    static Instance: OnLineManager;
 
     //"SynchroNutPosition"
     //
 
 
-    socket: Socket = null;
+    socket: any = null;
     start () {
-        this.socket= io.connect("http://localhost:3000");//127.0.0.1
-        //判断是否连接成功
+        OnLineManager.Instance = this;
+        this.socket= io.connect("http://localhost:5050");
+
         this.socket.on('connect',(data)=>{
-            console.debug("远程服务连接成功");
+            console.debug("连接成功");
+            //显示本机id
+            this.node.getChildByName("personalId").getComponent(cc.Label).string = `${this.socket.id}`;
+
+            this.socket.on('matchid',(data)=>{
+                OnLineManager.matchID = data;
+                this.node.getChildByName("opponentId").getComponent(cc.Label).string = `${data}`
+            });
+
+            this.socket.on("SynChroNewNut",(data)=>{
+                console.debug('接收到对手新建的nut');
+                console.debug(data);
+                let nut = cc.instantiate(this.normal_nut_pref) as any;
+                nut.setParent(cc.director.getScene());
+                nut.x = data['x'];
+                nut.y = data['y'];
+                nut.ID = data['nutID'];
+
+                
+            });
+
+            this.socket.on("SynchroNutPosition",(data)=>{
+                let mirror;
+                console.debug(this.mirrorNutList);
+                for(mirror of this.mirrorNutList){
+                    if(mirror.ID == data["nutID"]){
+                        break;
+                    }
+                }
+                mirror.moving(3,Number(data['x']),Number(data['y']));
+            })
+
+            
         });
 
     }
 
-    SynChroNewNut(nutID:number,[x,y]:number[]){
-        let msg = new MsgNutPos(nutID,x,y);
-        let json = JSON.stringify(msg);
-        this.socket.emit("SynChroNewNut",json);
+    static SynChroNewNut(nutID:number,[x,y]:number[]){
+        // let msg = new MsgNutPos(nutID,x,y);
+        // let json = JSON.stringify(msg);
+        OnLineManager.Instance.socket.emit("SynChroNewNut",
+        {
+            'socketID':OnLineManager.matchID,
+            "nutID":nutID,
+            "x":x,
+            "y":y
+        });
     }
 
-    SynchroNutPosition(nutID: number,[tarX,tarY]:number[]){
+    static SynchroNutPosition(nutID: number,[tarX,tarY]:number[]){
         //思路
         //把nut对应的mirror地址、目标的x,y坐标传过去
         //直接把id传过去
-        let msg = new MsgNutPos(nutID,tarX,tarY);
-        let json = JSON.stringify(msg);
-        this.socket.emit("SynchroNutPosition",json);
+        // let msg = new MsgNutPos(nutID,tarX,tarY);
+        // let json = JSON.stringify(msg);
+        OnLineManager.Instance.socket.emit("SynchroNutPosition",
+        {
+            'socketID':OnLineManager.matchID,
+            "nutID":nutID,
+            "x":tarX,
+            "y":tarY
+        });
     }
 
     SynchroNutValue(){

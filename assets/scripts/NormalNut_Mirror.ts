@@ -12,11 +12,12 @@ import Message, { MessageCmd, MessageType } from "./Message";
 import MessageCenter from "./MessageCenter";
 import Nut from "./Nut";
 import NutManager from "./NutManager";
+import OnLineManager from "./OnLineManager";
 import State, { Action, ClickNutAction, Owner, SelectedComp } from "./State"
 import { Mode,Process } from "./State";
 
 @ccclass
-export default class NormalNutMirror extends Nut{
+export default class NormalNutMirror extends ComponentBase{
 
     @property(cc.Label)
     label: cc.Label = null;
@@ -65,6 +66,10 @@ export default class NormalNutMirror extends Nut{
 
     healBar: cc.Node;
     shieldBar: cc.Node;
+
+    ID: number;
+
+    ani;
 
     @property(cc.Prefab)
     attackSuspendedIconPref: cc.Prefab;
@@ -149,6 +154,9 @@ export default class NormalNutMirror extends Nut{
         ring.setParent(this.node);
         ring.setPosition(0,-20);
 
+        //2022-8-26 联机内容
+        //加入OnLineManager类的mirrorNutList
+        OnLineManager.Instance.mirrorNutList.push(this);
 
         this.node.on(cc.Node.EventType.MOUSE_ENTER,(event)=>{
             if(!this._cursorAimedFrame){
@@ -196,19 +204,26 @@ export default class NormalNutMirror extends Nut{
         })
 
     }
-    update (dt) {
-        if(State.action == Process.MOVING && State.actionNut == this){
-            if(Math.abs(this.node.x-State.tarX)>3){
-                this.node.x-=(this.lastX-State.tarX)*dt/3;
-            }
-            if(Math.abs(this.node.y-State.tarY)>3){
-                this.node.y-=(this.lastY-State.tarY)*dt/3;
-            }
-            if(Math.abs(this.node.x-State.tarX)<=3&&Math.abs(this.node.y-State.tarY)<=3){
+    //2022-8-24 小人的移动逻辑
+    moving(time:number,x:number,y:number){
+        let actionMove = cc.moveTo(time,x,y);
+        let actionStopAni = cc.callFunc(()=>{
+            //移动完成后的调整
+            this.ani.stop();
+        })
+        let seq = cc.sequence(actionMove,actionStopAni);
+        //定义容器动作，相应移动时间后停止动画
+        this.node.runAction(seq);
+        //开始移动
+        this.ani = this.getComponent(cc.Animation);
+        this.ani.play("walking_normal_nut");
+        //播放行走动画
 
-                this.moveChanceRemainder -=1;
-            }
+        console.debug('当前移动小人的id为：');
+        console.debug(this.ID);
         }
+
+    update (dt) {
 
     }
     ReceiveMessage(msg: Message): void {

@@ -9,12 +9,19 @@ import ComponentBase from "./ComponentBase";
 import EffectManager from "./EffectMnanger";
 import Message, { MessageCmd, MessageType } from "./Message";
 import MessageCenter from "./MessageCenter";
-import State, { ClickNutAction } from "./State";
+import State, { ClickNutAction,Mode } from "./State";
 import { Process } from "./State";
 const {ccclass, property} = cc._decorator;
 
 @ccclass
 export default class NewClass extends ComponentBase {
+    /* 这个类的每个实例为小人的移动范围圈
+        定义了移动范围的各种逻辑判断
+        注意移动范围UI消失的情况枚举：
+        1.当前活动小人切换
+        2.当前用户已经确定好移动操作
+        3.当前移动模式切换到了其他模式
+     */
 
     @property(cc.Label)
     label: cc.Label = null;
@@ -22,51 +29,47 @@ export default class NewClass extends ComponentBase {
     @property
     text: string = 'hello';
 
-    // LIFE-CYCLE CALLBACKS:
 
     onLoad () {
         EffectManager.Instance.RegisterReceiver(this);
     }
 
-    // //存储小人移动前的状态
-    // saveMoveState(event){
-    //     State.tarX = event.getLocation().x;
-    //     State.tarY = event.getLocation().y;
-    // }
 
     start () {
         this.node.on(cc.Node.EventType.MOUSE_ENTER,(event)=>{
             State.canMove = true;
-            // this._canMove = true;
         })
 
         this.node.on(cc.Node.EventType.MOUSE_LEAVE,(event)=>{
             State.canMove = false;
-            // this._canMove = false;
         })
         this.node.on(cc.Node.EventType.MOUSE_DOWN,(event)=>{
-            if(State.canMove){
-                //this.saveMoveState(event);
-                let tarLoc: number[] = [event.getLocation().x,event.getLocation().y];
-                MessageCenter.SendMessage(MessageType.TYPE_STATE,MessageCmd.CMD_SET_NUT_TARGET_LOCATION,tarLoc);
-                // State.tarX = event.getLocation().x;
-                // State.tarY = event.getLocation().y;
-                // NormalNut.Instance().tarX = event.getX;
-                // NormalNut.Instance().tarY = event.getY;
+            if(State.canMove && State.actionNut.moveChanceRemainder){
+                
+                //移动范围销毁条件2：当前用户已经确定好移动操作
                 EffectManager.Instance.WithDrawReceiver(this);
+                //从该物件对应的管理者名单中注销该物件，避免以后消息推送出现错误
                 this.node.destroy();
-                State.action = Process.MOVING;
-                State.actionNut.moving();
-                console.debug(State.actionNut);
+                //将该物件销毁
+                
+                State.actionNut.moving(3,event.getLocation());
+                //执行小人移动逻辑
+                            
+                State.actionNut.moveChanceRemainder -=1;
+                MessageCenter.SendMessage(MessageType.TYPE_STATE,MessageCmd.CMD_MOVECHANCE_CHANGED,null);
+                //消息推送，移动次数发生变化     
             }
             
         })
     }
 
     ReceiveMessage(msg: Message): void {
-        if(msg.Command == MessageCmd.CMD_CLICK_NUT_ACTION_CHANGED){
-            if(msg.Content != ClickNutAction.MOVE){
-                EffectManager.Instance.ReceiveList.splice(EffectManager.Instance.ReceiveList.indexOf(this),1);
+        //控件将不关心Action的转变，统一接收EffectManager的一个命令控制
+        if(msg.Command == MessageCmd.CMD_EFFECT_CHANGE){
+            //移动范围销毁条件1：当前切换了活动小人
+            //移动范围销毁条件3：当前移动模式切换到了其他模式
+            if(msg.Content != this.node){
+                EffectManager.Instance.WithDrawReceiver(this);
                 this.node.destroy();
             }
         }

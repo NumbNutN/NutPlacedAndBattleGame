@@ -31,12 +31,15 @@ export default class Nut extends ComponentBase {
 
     mirrorNut: ComponentBase;
 
-    moving(){
+    ani;  //动画存储器
+
+    movingAnimation(){
 
     }
 
+    moving(time:number,pos:any){
 
-
+    }
 
 
     // get heal(){
