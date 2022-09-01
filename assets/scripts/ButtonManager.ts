@@ -6,6 +6,7 @@
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 
 const {ccclass, property} = cc._decorator;
+import OnLineManager, { OnLineState } from "./OnLineManager";
 import State ,{Mode,Process} from "./State";
 
 @ccclass
@@ -26,7 +27,8 @@ export default class NewClass extends cc.Component {
     }
 
     goToNextRound(){
-        State.mode = Mode.OPERATEMODE;
+        State.mode = Mode.FREEZEMODE;
+        OnLineManager.ChangeState(OnLineState.YOUR_ROUND);
     }
 
     // update (dt) {}

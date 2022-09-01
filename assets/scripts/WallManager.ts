@@ -74,7 +74,7 @@ export default class WallManager extends ManagerBase {
         //生成城墙的预览
         for(let i = 0;i<=this.wallNuminWidth;i++){
             for(let j=0;j<=this.wallNuminHeight;j++){
-                console.debug("生成点");
+                //console.debug("生成点");
                 newDot = cc.instantiate(this.dotPre);
                 newDot.setParent(this.showWindow);
                 newDot.setPosition(i*this.wallWidth,j*this.wallHeight);
@@ -91,7 +91,7 @@ export default class WallManager extends ManagerBase {
                     //console.debug(""+i+" "+j);
                     newPreview.setParent(this.showWindow);
                     newPreview.setPosition(Math.floor(i/this.wallNuminHeight)*this.wallWidth+this.pos[j][0],(i%this.wallNuminHeight)*this.wallHeight+this.pos[j][1]);
-                    console.debug(Math.floor(i/this.wallNuminHeight)*this.wallWidth+this.pos[j][0]+" "+((i%this.wallNuminHeight)*this.wallHeight+this.pos[j][1]));
+                    //console.debug(Math.floor(i/this.wallNuminHeight)*this.wallWidth+this.pos[j][0]+" "+((i%this.wallNuminHeight)*this.wallHeight+this.pos[j][1]));
                     //newPreview.setPosition(Math.floor(i/this.wallNuminHeight*this.pos[j][0]),i%this.wallNuminHeight*this.pos[j][1]);
                     newPreview.angle = this.pos[j][2];
                     newPreview.opacity = 0;

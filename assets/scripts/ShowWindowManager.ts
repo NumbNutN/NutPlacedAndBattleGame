@@ -25,7 +25,13 @@ export default class NewClass extends ManagerBase {
     // onLoad () {}
 
     start () {
-        
+        let showNumLabel: cc.Node;
+        showNumLabel = new cc.Node();
+        showNumLabel.addComponent(cc.Label);
+        showNumLabel.setParent(this.node);
+        showNumLabel.setPosition(50,50);
+        showNumLabel.getComponent(cc.Label).string = "喵喵喵？";
+        showNumLabel.zIndex = 1;
 
 
     }

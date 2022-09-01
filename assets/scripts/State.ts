@@ -5,11 +5,15 @@
 // Learn life-cycle callbacks:
 //  - https://docs.cocos.com/creator/manual/en/scripting/life-cycle-callbacks.html
 import ComponentBase from "./ComponentBase";
-import Nut from "./Nut";
+import NutBase from "./Nut/NutBase";
 import ManagerBase from "./ManagerBase";
 import Message, { MessageCmd, MessageType } from "./Message";
 import MessageCenter from "./MessageCenter";
-import NutManager from "./NutManager";
+import NutManager from "./Nut/NutManager";
+import CompoundBase from "./workingTable/CompoundBase";
+import EquipAccessoriesBase from "./equipItem/EquipAccessoriesBase";
+import NormalNutMirror from "./mirror/NormalNut_Mirror";
+import NormalNut from "./Nut/NormalNut";
 const {ccclass, property} = cc._decorator;
 
 export enum SelectedComp{
@@ -23,7 +27,9 @@ export enum Mode{
     OPERATEMODE,
     MOVEMODE,
     BUILDMODE,
-    ATTACKMODE
+    ATTACKMODE,
+    COMPOUNDMODE,
+    FREEZEMODE
     
 }
 
@@ -78,13 +84,20 @@ export default class State extends ManagerBase{
 
     private static _mode :Mode = Mode.OPERATEMODE;
 
-    static actionNut: Nut = null;
+    static actionNut: NormalNut = null;
     static tarX: number;
     static tarY: number;
     static lastX: number;
     static lastY: number;
 
     static curID: number = 0;
+    static curPickableID: number = 0;
+
+    static selectedCompound: CompoundBase = null;
+    static selectedAccessory: EquipAccessoriesBase = null;
+
+    //2022-8-29  储存被选中的对方nut
+    static selectedEnemyNut: NormalNutMirror = null;
 
     //2022-8-22
     //State管理类的实例
@@ -92,6 +105,10 @@ export default class State extends ManagerBase{
 
     static distributeNewID():number{
         return State.curID++;
+    }
+
+    static distributeNewPickableItemID():number{
+        return State.curPickableID++;
     }
 
     private static temp: number;
@@ -234,7 +251,7 @@ export default class State extends ManagerBase{
         this.updateMoveRemainder();
         this.updateAttackRemainder();
         //设置好当前的模式
-        State.mode = Mode.OPERATEMODE;
+        State.mode = Mode.FREEZEMODE;
         State.action = Process.DO_NOTHING;
         
     }
